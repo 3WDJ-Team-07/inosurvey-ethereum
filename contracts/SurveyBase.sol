@@ -7,9 +7,8 @@ contract SurveyBase is SurveyAccessControl {
     /*** DATA TYPES ***/
     struct Survey {
         string surveyUUID;   // DB address UUID
-        // uint64 createdAt;   // created Date
-        // bytes32 signed;      
-        // boolean isSale;     // 판매 여부
+        uint64 createdAt;    // created Date
+        bytes32 signed;      
     }
 
     /*** EVENT ***/
@@ -45,9 +44,11 @@ contract SurveyBase is SurveyAccessControl {
     }
 
     /// 설문 등록
-    function _createSurvey(string memory _surveyUUID, address _owner) internal returns (uint256) {
+    function _createSurvey(string memory _surveyUUID, address _owner, bytes32 _signed) internal returns (uint256) {
         Survey memory _survey = Survey({
-            surveyUUID: _surveyUUID
+            surveyUUID: _surveyUUID,
+            createdAt: uint64(now),
+            signed: _signed
         });
 
         uint256 newSurveyId = surveys.push(_survey) - 1;
