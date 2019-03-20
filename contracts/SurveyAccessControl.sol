@@ -1,24 +1,34 @@
 pragma solidity ^0.5.0;
 
-contract SurveyAccessControl {
-    // owner address
-    address public developer;
+import "./SurveyTokenInterface.sol";
 
-    //contract lifeCycle
+contract SurveyAccessControl {
+    /*** ADDRESSES ***/
+    address public developerAddress;
+
+    /*** CONTRACT ***/
+    SurveyTokenInterface public token;
+
+
+    /*** CONTRACT LIFECYCLE ***/
     bool public paused = false;
 
-    event ContractUpgrade(address newContract);
-
     modifier onlyDeveloper() {
-        require(msg.sender == developer, "Not Owner");
+        require(msg.sender == developerAddress, "Not Owner");
         _;
     }
     
-    // set owner
-    function setOwner(address _newDeveloper) external onlyDeveloper {
+    // set owner(developer)
+    function setDeveloper(address _newDeveloperAddress) external onlyDeveloper {
         // address 0x0... 무시하기(악의적인 컨트랙트 burning 방지)
-        require(_newDeveloper != address(0), "Warning");
-        developer = _newDeveloper;
+        require(_newDeveloperAddress != address(0), "Warning");
+        developerAddress = _newDeveloperAddress;
+    }
+
+    //set tokenContract address
+    function setTokenContractAddress(address _newContractAddress) external onlyDeveloper {
+        require(_newContractAddress != address(0), "Warning");
+        token = SurveyTokenInterface(_newContractAddress);
     }
 
     modifier whenNotPaused() {

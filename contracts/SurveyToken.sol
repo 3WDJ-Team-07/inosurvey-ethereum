@@ -1,9 +1,9 @@
 pragma solidity ^0.5.0;
 
-import "../node_modules/openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
+import "./SurveyTokenInterface.sol";
 import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 
-contract SurveyToken is IERC20 {
+contract SurveyToken is SurveyTokenInterface {
     using SafeMath for uint256;
     
     mapping (address => uint256) private _balances;
