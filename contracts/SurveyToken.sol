@@ -1,31 +1,20 @@
 pragma solidity ^0.5.0;
 
 import "./SurveyTokenInterface.sol";
+import "./SurveyBase.sol";
 import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 
-contract SurveyToken is SurveyTokenInterface {
+contract SurveyToken is SurveyBase, SurveyTokenInterface {
     using SafeMath for uint256;
     
     mapping (address => uint256) private _balances;
     mapping (address => mapping (address => uint256)) private _allowed;
 
     uint256 private _totalSupply;
-    string private _name;
-    uint8 private _decimals;
-    string private _symbol;
+    string private _name = "INOCOIN";
+    uint8 private _decimals = 18;
+    string private _symbol = "INC";
 
-    constructor(
-        uint256 _initialAmount,
-        string memory _tokenName,
-        uint8 _decimalsUnits,
-        string memory _tokenSymbol
-    ) public {
-        _mint(msg.sender, _initialAmount);
-        _name = _tokenName;
-        _decimals = _decimalsUnits;
-        _symbol = _tokenSymbol;
-    }
-    
     /// 토큰 총 발행량
     function totalSupply() public view returns (uint256) {
         return _totalSupply;
@@ -81,22 +70,22 @@ contract SurveyToken is SurveyTokenInterface {
         return true;
     }
 
-    /// 토큰 송신 메소드
-    function _transfer(address from, address to, uint256 value) internal {
-        require(to != address(0), "burn address!!!");
-
-        _balances[from] = _balances[from].sub(value);
-        _balances[to] = _balances[to].add(value);
-        emit Transfer(from, to, value);
-    }
-
-    /// 토큰 생성 메소드
-    function _mint(address account, uint256 value) internal {
+        /// 토큰 생성 메소드
+    function mint(address account, uint256 value) internal onlyDeveloper {
         require(account != address(0));
 
         _totalSupply = _totalSupply.add(value);
         _balances[account] = _balances[account].add(value);
         emit Transfer(address(0), account, value);
+    }
+
+    /// 토큰 송신 메소드
+    function _transfer(address from, address to, uint256 value) internal {
+        require(to != address(0), "burn address!!!");
+        
+        _balances[from] = _balances[from].sub(value);
+        _balances[to] = _balances[to].add(value);
+        emit Transfer(from, to, value);
     }
 
     function name() public view returns (string memory) {

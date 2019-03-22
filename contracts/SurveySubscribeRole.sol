@@ -1,9 +1,9 @@
 pragma solidity ^0.5.0;
 
-import "./SurveyBase.sol";
+import "./SurveyToken.sol";
 import "../node_modules/openzeppelin-solidity/contracts/access/Roles.sol";
 
-contract SurveySubscribeRole is SurveyBase {
+contract SurveySubscribeRole is SurveyToken {
     using Roles for Roles.Role;
 
     event SubscriberAdded(uint256 surveyId, address indexed account);

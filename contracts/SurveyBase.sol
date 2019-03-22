@@ -7,8 +7,9 @@ contract SurveyBase is SurveyAccessControl {
     /*** EVENT ***/
     // 설문 생성 알림
     event CreateSurvey(uint256 surveyId, address owner);
+    
     // 설문 owner 변경 알림
-    event Transfer(address from, address to, uint256 surveyId);
+    event SurveyTransfer(address from, address to, uint256 surveyId);
 
     /*** DATA TYPES ***/
     struct Survey {
@@ -27,9 +28,7 @@ contract SurveyBase is SurveyAccessControl {
     *       4               17 ~ 20                     680
     *       5               21 ~ 24                     800
     *       6               25 ~ 28                     900
-    *       7               ~ 30                        1000
-    *
-    *     
+    *       7               ~ 30                        1000      
     */
     uint16[8] public PricePerQuestions = [
         uint16(100),
@@ -65,7 +64,7 @@ contract SurveyBase is SurveyAccessControl {
             delete surveyIndexToApproved[_surveyId];
         }
         
-        emit Transfer(_from, _to, _surveyId);
+        emit SurveyTransfer(_from, _to, _surveyId);
     }
 
     /// 설문 등록

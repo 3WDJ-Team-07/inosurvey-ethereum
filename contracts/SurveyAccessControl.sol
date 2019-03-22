@@ -6,8 +6,8 @@ contract SurveyAccessControl {
     /*** ADDRESSES ***/
     address public developerAddress;
 
-    /*** CONTRACT ***/
-    SurveyTokenInterface public token;
+    // /*** CONTRACT ***/
+    // SurveyTokenInterface public token;
 
 
     /*** CONTRACT LIFECYCLE ***/
@@ -25,11 +25,11 @@ contract SurveyAccessControl {
         developerAddress = _newDeveloperAddress;
     }
 
-    //set tokenContract address
-    function setTokenContractAddress(address _newContractAddress) external onlyDeveloper {
-        require(_newContractAddress != address(0), "Warning");
-        token = SurveyTokenInterface(_newContractAddress);
-    }
+    // //set tokenContract address
+    // function setTokenContractAddress(address _newContractAddress) external onlyDeveloper {
+    //     require(_newContractAddress != address(0), "Warning");
+    //     token = SurveyTokenInterface(_newContractAddress);
+    // }
 
     modifier whenNotPaused() {
         require(!paused, "already paused.");
