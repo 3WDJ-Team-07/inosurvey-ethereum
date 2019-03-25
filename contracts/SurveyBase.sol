@@ -7,87 +7,119 @@ contract SurveyBase is SurveyAccessControl {
     /*** EVENT ***/
     // 설문 생성 알림
     event CreateSurvey(uint256 surveyId, address owner);
-    
-    // 설문 owner 변경 알림
-    event SurveyTransfer(address from, address to, uint256 surveyId);
+    event CreateReceipt(uint256 ReceiptId, address owner);
 
     /*** DATA TYPES ***/
     struct Survey {
-        string  surveyUUID;   // DB address UUID
-        uint64  createdAt;
-        uint8   questionCount;    // created Date
-        bytes32 hashData;      
+          // DB에 저장된 설문 고유 번호
+        uint8 questionCount;    // 질문 개수
+        // bytes32 hashData;       // DB 데이터 변조 여부 확인
     }
+    struct Receipt {
+        address to;
+        address from;
+        uint256 total;
+    }
+
     /*** CONSTANTS ***/
-    /** 
-    *       index           sruvey question num         price
-    *       0               1 ~ 4                       100
-    *       1               5 ~ 8                       250
-    *       2               9 ~ 12                      400
-    *       3               13 ~ 16                     500
-    *       4               17 ~ 20                     680
-    *       5               21 ~ 24                     800
-    *       6               25 ~ 28                     900
-    *       7               ~ 30                        1000      
-    */
-    uint16[8] public PricePerQuestions = [
-        uint16(100),
-        uint16(250),
-        uint16(400),
-        uint16(500),
-        uint16(680),
-        uint16(800),
-        uint16(900),
-        uint16(1000)
-    ];
+    enum ReceiptTitles {
+        SurveyRequest,
+        SurveyResponse,
+        SurveyBuy,
+        SurveySell,
+        ProductBuy,
+        ProductSell
+    }
 
     /*** STORAGE ***/
-    /// 설문 조사
+    /// 설문 조사 저장
     Survey[] surveys;
+    Receipt[] receipts;
 
-    /// 설문조사 오너 주소
-    mapping (uint256 => address) public surveyIndexToOwner;
+    /// DB UUID에 해당하는 설문 인덱스 번호
+    mapping(string => uint256) uuidToSurveyIndex;
+    /// 설문 조사 요청자
+    mapping (uint256 => address) surveyIndexToOwner;
+    /// 내가 요청한 설문 조사 리스트
+    mapping (address => uint256[]) ownershipSurveyList;   
+    
+    /**** Receipt ****/ 
+    // 영수증 인덱스 => 주인
+    mapping (uint256 => address) receiptIndexToOwner;
+    // 유저가 요청한 설문 조사 영수증 리스트
+    mapping (address => uint256[]) surveyRequestReceiptList;
+    // 유저가 응답한 설문 조사 영수증 리스트
+    mapping (address => uint256[]) surveyResponceReceiptList;
+    // 유저가 구매한 설문 조사 영수증 리스트
+    mapping (address => uint256[]) surveyBuyReceiptList;
+    // 유저가 판매한 설문 조사 영수증 리스트
+    mapping (address => uint256[]) surveySellReceiptList;
+    // 유저가 구매한 상품 영수증 리스트
+    mapping (address => uint256[]) productBuyReceiptList;
+    // 유저가 판매한 상품 영수증 리스트
+    mapping (address => uint256[]) productSellReceiptList;
 
-    /// 오너가 가진 설문조사 개수
-    mapping (address => uint256) ownershipSurveyCount;
-
-    /// 설문 판매가 허가된 주소
-    mapping (uint256 => address) public surveyIndexToApproved;
-
-    /// 설문 소유자 이전
-    function _transfer(address _from, address _to, uint _surveyId) internal {
-        ownershipSurveyCount[_to]++;
-        surveyIndexToOwner[_surveyId] = _to;
-
-        if(_from != address(0)) {
-            ownershipSurveyCount[_from]--;
-            delete surveyIndexToApproved[_surveyId];
-        }
-        
-        emit SurveyTransfer(_from, _to, _surveyId);
-    }
-
-    /// 설문 등록
+    
+    /// 설문 생성
     function _createSurvey(
-        string memory _surveyUUID, 
-        uint8 _questionCount, 
-        address _owner, 
-        bytes32 _hashData
-    ) 
-        internal 
-        returns (uint256) 
+        string memory _uuid,
+        uint8 _questionCount
+        // bytes32 _hashData
+    )
+        internal
+        returns (uint256)
     {
         Survey memory _survey = Survey({
-            surveyUUID: _surveyUUID,
-            createdAt: uint64(now),
-            questionCount: _questionCount,
-            hashData: _hashData
+            //uuid: _uuid,
+            questionCount: _questionCount
+            //hashData: _hashData
         });
-
         uint256 newSurveyId = surveys.push(_survey) - 1;
 
-        emit CreateSurvey(newSurveyId, _owner);
-        _transfer(address(0), _owner, newSurveyId);
+        uuidToSurveyIndex[_uuid] =  newSurveyId;
+        surveyIndexToOwner[newSurveyId] = msg.sender;
+        ownershipSurveyList[msg.sender].push(newSurveyId);
+
+        emit CreateSurvey(newSurveyId, msg.sender);
+
         return newSurveyId;
+    }
+
+    /// 영수증 발급
+    function _createReceipt(
+        address _to,
+        address _from,
+        uint256 _total,
+        ReceiptTitles _title
+    )
+        internal
+        returns (uint256)
+    {
+        Receipt memory _receipt = Receipt({
+            to: _to,
+            from: _from,
+            total: _total
+        });
+        uint256 newReceiptId = receipts.push(_receipt) - 1;
+        receiptIndexToOwner[newReceiptId] = msg.sender;
+        
+        if(_title == ReceiptTitles.SurveyRequest) {
+            surveyRequestReceiptList[msg.sender].push(newReceiptId);
+        }else if(_title == ReceiptTitles.SurveyResponse) {
+            surveyResponceReceiptList[msg.sender].push(newReceiptId);
+        }else if(_title == ReceiptTitles.SurveyBuy) {
+            surveyBuyReceiptList[msg.sender].push(newReceiptId);
+        }else if(_title == ReceiptTitles.SurveySell) {
+            surveySellReceiptList[msg.sender].push(newReceiptId);
+        }else if(_title == ReceiptTitles.ProductBuy) {
+            productBuyReceiptList[msg.sender].push(newReceiptId);
+        }else if(_title == ReceiptTitles.ProductSell) {
+            productSellReceiptList[msg.sender].push(newReceiptId);
+        }else {
+            revert();
+        }
+        
+        emit CreateReceipt(newReceiptId, msg.sender);
+        return newReceiptId;
     }
 }

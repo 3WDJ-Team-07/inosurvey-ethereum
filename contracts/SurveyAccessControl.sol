@@ -1,11 +1,10 @@
 pragma solidity ^0.5.0;
 
-import "./SurveyTokenInterface.sol";
-
 contract SurveyAccessControl {
     /*** ADDRESSES ***/
     address public developerAddress;
-
+    address public tokenAddress;
+    
     // /*** CONTRACT ***/
     // SurveyTokenInterface public token;
 
@@ -24,13 +23,7 @@ contract SurveyAccessControl {
         require(_newDeveloperAddress != address(0), "Warning");
         developerAddress = _newDeveloperAddress;
     }
-
-    // //set tokenContract address
-    // function setTokenContractAddress(address _newContractAddress) external onlyDeveloper {
-    //     require(_newContractAddress != address(0), "Warning");
-    //     token = SurveyTokenInterface(_newContractAddress);
-    // }
-
+    
     modifier whenNotPaused() {
         require(!paused, "already paused.");
         _;

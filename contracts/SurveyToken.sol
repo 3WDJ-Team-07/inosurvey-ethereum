@@ -1,102 +1,18 @@
 pragma solidity ^0.5.0;
 
-import "./SurveyTokenInterface.sol";
+import "./StandardToken.sol";
 import "./SurveyBase.sol";
-import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 
-contract SurveyToken is SurveyBase, SurveyTokenInterface {
-    using SafeMath for uint256;
-    
-    mapping (address => uint256) private _balances;
-    mapping (address => mapping (address => uint256)) private _allowed;
-
-    uint256 private _totalSupply;
-    string private _name = "INOCOIN";
-    uint8 private _decimals = 18;
-    string private _symbol = "INC";
-
-    /// 토큰 총 발행량
-    function totalSupply() public view returns (uint256) {
-        return _totalSupply;
-    }
-
-    /// 토큰 소유 갯수
-    function balanceOf(address owner) public view returns (uint256) {
-        return _balances[owner];
-    }
-
-    /// 토큰 소유자가 토큰 수신자에게 인출을 허락한 토큰이 얼마인지를 반환
-    function allowance(address owner, address spender) public view returns (uint256) {
-        return _allowed[owner][spender];
-    }
-
-    /// 송신자 계정에서 수신자 계정에게 토큰 송신
-    function transfer(address to, uint256 value) public returns (bool) {
-        _transfer(msg.sender, to, value);
-        return true;
-    }
-    /// 송신자가 보유한 토큰에서 일정 금액 만큼의 토큰을 인출할 수 있는 권한을 수신자에게 부여
-    function approve(address spender, uint256 value) public returns (bool) {
-        require(spender != address(0));
-
-        _allowed[msg.sender][spender] = value;
-        emit Approval(msg.sender, spender, value);
+contract SurveyToken is SurveyBase, StandardToken {
+    /// EA 계좌에서 개발자에게 토큰 전송
+    function _transferTokenToThis(uint256 _value) internal returns (bool){
+        _transfer(address(this), developerAddress, _value);
         return true;
     }
 
-    /// 송신자 account에서 해당 금액 만큼의 토큰을 인출해서 수신자 어카운트로 해당 금액 만큼의 토큰을 송신
-    function transferFrom(address from, address to, uint256 value) public returns (bool) {
-        _allowed[from][msg.sender] = _allowed[from][msg.sender].sub(value);
-        _transfer(from, to, value);
-        emit Approval(from, msg.sender, _allowed[from][msg.sender]);
+    /// EA 계좌에서 유저에게 토큰 전송
+    function _transferTokenToUser(address _userAddr, uint256 _value) internal returns (bool) {
+        _transfer(address(this), _userAddr, _value);
         return true;
-    }
-    
-    /// 허가된 송신 금액중 원하는 금액만큼 추가
-    function increaseAllowance(address spender, uint256 addedValue) public returns (bool) {
-        require(spender != address(0));
-
-        _allowed[msg.sender][spender] = _allowed[msg.sender][spender].add(addedValue);
-        emit Approval(msg.sender, spender, _allowed[msg.sender][spender]);
-        return true;
-    }
-
-    /// 허가된 송신 금액중 원하는 금액만큼 감소
-    function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool) {
-        require(spender != address(0));
-
-        _allowed[msg.sender][spender] = _allowed[msg.sender][spender].sub(subtractedValue);
-        emit Approval(msg.sender, spender, _allowed[msg.sender][spender]);
-        return true;
-    }
-
-        /// 토큰 생성 메소드
-    function mint(address account, uint256 value) internal onlyDeveloper {
-        require(account != address(0));
-
-        _totalSupply = _totalSupply.add(value);
-        _balances[account] = _balances[account].add(value);
-        emit Transfer(address(0), account, value);
-    }
-
-    /// 토큰 송신 메소드
-    function _transfer(address from, address to, uint256 value) internal {
-        require(to != address(0), "burn address!!!");
-        
-        _balances[from] = _balances[from].sub(value);
-        _balances[to] = _balances[to].add(value);
-        emit Transfer(from, to, value);
-    }
-
-    function name() public view returns (string memory) {
-        return _name;
-    }
-
-    function symbol() public view returns (string memory) {
-        return _symbol;
-    }
-
-    function decimals() public view returns (uint8) {
-        return _decimals;
     }
 }
