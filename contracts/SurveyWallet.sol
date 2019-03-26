@@ -4,7 +4,7 @@ import "./StandardToken.sol";
 import "./SurveyOwnership.sol";
 
 contract SurveyWallet is SurveyOwnership, StandardToken {
-
+    uint256[] resultList;
     /// 영수증의 모든 정보 반환
     function getReceiptDetail(uint256 _receiptId) 
         public 
@@ -30,34 +30,46 @@ contract SurveyWallet is SurveyOwnership, StandardToken {
             receipts[_receiptId].date 
         );
     }
-    /// 내가 요청한 설문 영수증 리스트의 설문 primary key Index 반환
-    function getSurveyRequestReceiptList() 
-        public
-        returns (uint256[] memory) 
-    {
-        
+    /// 내가 요청한 설문 영수증의 Index List 반환
+    function getSurveyRequestReceiptList() public view returns (uint256[] memory) {
+        return surveyRequestReceiptList[msg.sender];
     }
-    /// 내가 응답한 설문 영수증 리스트의 설문 primary key Index 반환
+    /// 내가 응답한 설문 영수증의 Index List 반환
+    function getSurveyResponseReceiptList() public view returns (uint256[] memory) {
+        return surveyRequestReceiptList[msg.sender];
+    }
+    /// 내가 구매한 설문 영수증의 Index List 반환
+    function getSurveyBuyReceiptList() public view returns (uint256[] memory) {
+        return surveyRequestReceiptList[msg.sender];
+    }
+    /// 내가 판매한 설문 영수증의 Index List 반환
+    function getSurveySellReceiptList() public view returns (uint256[] memory) {
+        return surveyRequestReceiptList[msg.sender];
+    }
+    /// 내가 구매한 상품 영수증의 상품 Index List 반환
+    function getProductBuyReceiptList() public view returns (uint256[] memory) {
+        return surveyRequestReceiptList[msg.sender];
+    }
+    /// 내가 판매한 상품 영수증의 Index List 반환
+    function getProductSellReceiptList() public view returns (uint256[] memory) {
+        return surveyRequestReceiptList[msg.sender];
+    }
 
-    /// 내가 구매한 설문 영수증 리스트의 설문 primary key Index 반환
-
-    /// 내가 판매한 설문 영수증 리스트의 설문 primary key Index 반환
-
-    /// 내가 구매한 상품 영수증 리스트의 상품 primary key Index 반환
-
-    /// 내가 판매한 상품 영수증 리스트의 상풍 primary key Index 반환
-
-
-    /** Contract Internal Functions **/
-    /// EA 계좌에서 개발자에게 토큰 전송
-    function _transferTokenToThis(uint256 _value) internal returns (bool){
+    /** TokenTransfer Internal Functions **/
+    /// msg.sender => EA
+    function _tranferTokenFromUserToThis(uint256 _value) internal returns (bool) {
+        _transfer(msg.sender, address(this), _value);
+        return true;
+    }
+    /// EA => DeveloperAddress
+    function _transferTokenFromThisToDeveloper(uint256 _value) internal returns (bool) {
         _transfer(address(this), developerAddress, _value);
         return true;
     }
 
-    /// EA 계좌에서 유저에게 토큰 전송
-    function _transferTokenToUser(address _userAddr, uint256 _value) internal returns (bool) {
-        _transfer(address(this), _userAddr, _value);
+    /// EA => msg.sender
+    function _transferTokenFromThisToUser(uint256 _value) internal returns (bool) {
+        _transfer(address(this), msg.sender, _value);
         return true;
     }
 }

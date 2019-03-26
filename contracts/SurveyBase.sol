@@ -12,7 +12,10 @@ contract SurveyBase is SurveyAccessControl {
 
     /*** DATA TYPES ***/
     struct Survey {
-        uint8 questionCount;    // 질문 개수
+        uint256 requestPrice;       // 설문 등록 가격
+        uint256 sellPrice;          // 설문 판매 가격
+        uint8   questionCount;      // 질문 개수
+        bool    isSell;             // 팔지 말지 
         // bytes32 hashData;       // DB 데이터 변조 여부 확인
     }
 
@@ -29,12 +32,12 @@ contract SurveyBase is SurveyAccessControl {
         uint256 total;
         uint256 date;
     }
-    // struct Product {
-    //     string  name;
-    //     uint256 price;
-    // }
 
     /*** CONSTANTS ***/
+    // survey constants
+    uint256 public constant PRICE_PER_QUESTION = 100;
+
+    // receipt constants
     enum ReceiptTitles {
         Survey,
         Product
@@ -52,7 +55,7 @@ contract SurveyBase is SurveyAccessControl {
     Product[] products;
     Receipt[] receipts;
 
-    /*** data ownership ***/
+    /*** data's ownership ***/
     /// 설문 데이터 주인
     mapping (uint256 => address) surveyIndexToOwner;
     /// 상품 데이터 주인
@@ -60,7 +63,9 @@ contract SurveyBase is SurveyAccessControl {
     /// 영수증 데이터 주인
     mapping (uint256 => address) receiptIndexToOwner;
 
-    /*** Receipt ***/
+    /*** Surveys ***/
+    
+    /*** Receipts ***/
     // 유저가 요청한 설문 조사 영수증 리스트
     mapping (address => uint256[]) surveyRequestReceiptList;    
     // 유저가 응답한 설문 조사 영수증 리스트
@@ -77,17 +82,23 @@ contract SurveyBase is SurveyAccessControl {
     
     /// 설문 생성
     function _createSurvey(
-        string memory _uuid,
-        uint8 _questionCount
+        uint256 _requestPrice,
+        uint256 _sellPrice,
+        uint8   _questionCount,
+        bool    _isSell
         // bytes32 _hashData
     )
         internal
         returns (uint256)
     {
         Survey memory _survey = Survey({
-            questionCount: _questionCount
+            requestPrice:   _requestPrice,
+            sellPrice:      _sellPrice,
+            questionCount:  _questionCount,
+            isSell:         _isSell
             //hashData: _hashData
         });
+
         uint256 newSurveyId = surveys.push(_survey) - 1;
 
         surveyIndexToOwner[newSurveyId] = msg.sender;
@@ -99,7 +110,6 @@ contract SurveyBase is SurveyAccessControl {
 
     /// 상품 생성
     function _createProduct(
-        string memory _uuid,
         uint256 _price
     )
         internal
@@ -138,10 +148,8 @@ contract SurveyBase is SurveyAccessControl {
             total: _total,
             date: now
         });
-
         uint256 newReceiptId = receipts.push(_receipt) - 1;
         receiptIndexToOwner[newReceiptId] = msg.sender;
-        
         // 설문인 경우
         if(_title == ReceiptTitles.Survey) {
             if(_method == ReceiptMethods.Request) {
