@@ -3,7 +3,8 @@ pragma solidity ^0.5.0;
 import "./StandardToken.sol";
 import "./SurveyOwnership.sol";
 
-contract SurveyWallet is SurveyOwnership, StandardToken {
+contract SurveyWallet is SurveyOwnership, StandardToken { 
+    
     uint256[] resultList;
     /// 영수증의 모든 정보 반환
     function getReceiptDetail(uint256 _receiptId) 

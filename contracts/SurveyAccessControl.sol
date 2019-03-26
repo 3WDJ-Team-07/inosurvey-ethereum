@@ -8,7 +8,6 @@ contract SurveyAccessControl {
     // /*** CONTRACT ***/
     // SurveyTokenInterface public token;
 
-
     /*** CONTRACT LIFECYCLE ***/
     bool public paused = false;
 

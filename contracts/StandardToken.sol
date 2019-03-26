@@ -4,8 +4,11 @@ import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "../node_modules/openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 contract StandardToken is IERC20 {
-        using SafeMath for uint256;
-    
+    using SafeMath for uint256;
+    /*** USER INTERFACE MAPPING ***/
+    mapping(address => uint256) private _consumeBalances;
+
+    /*** ERC20 INTERFACE MAPPING ***/
     mapping (address => uint256) private _balances;
     mapping (address => mapping (address => uint256)) private _allowed;
 
@@ -24,6 +27,11 @@ contract StandardToken is IERC20 {
         return _balances[owner];
     }
 
+    /// 토큰 소유 갯수
+    function consumeBalanceOf(address owner) public view returns (uint256) {
+        return _consumeBalances[owner];
+    }
+    
     /// 토큰 소유자가 토큰 수신자에게 인출을 허락한 토큰이 얼마인지를 반환
     function allowance(address owner, address spender) public view returns (uint256) {
         return _allowed[owner][spender];
@@ -69,7 +77,7 @@ contract StandardToken is IERC20 {
         return true;
     }
 
-        /// 토큰 생성 메소드
+    /// 토큰 생성 메소드
     function mint(address account, uint256 value) internal {
         require(account != address(0));
 
@@ -81,9 +89,9 @@ contract StandardToken is IERC20 {
     /// 토큰 송신 메소드
     function _transfer(address from, address to, uint256 value) internal {
         require(to != address(0), "burn address!!!");
-        
         _balances[from] = _balances[from].sub(value);
         _balances[to] = _balances[to].add(value);
+        _consumeBalances[from] = _consumeBalances[from].add(value);
         emit Transfer(from, to, value);
     }
 

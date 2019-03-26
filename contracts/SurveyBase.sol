@@ -3,11 +3,12 @@ pragma solidity ^0.5.0;
 import "./SurveyAccessControl.sol";
 
 contract SurveyBase is SurveyAccessControl {
-
     /*** EVENT ***/
-    // 설문 생성 알림
+    /** @dev 설문 생성 이벤트 */
     event CreateSurvey(uint256 surveyId, address owner);
+    /** @dev 상품 생성 이벤트 */
     event CreateProduct(uint256 productId, address owner);
+    /** @dev 영수증 생성 이벤트 */
     event CreateReceipt(uint256 ReceiptId, address owner);
 
     /*** DATA TYPES ***/
@@ -55,7 +56,7 @@ contract SurveyBase is SurveyAccessControl {
     Product[] products;
     Receipt[] receipts;
 
-    /*** data's ownership ***/
+    /*** DATA's OWNERSHIP ***/
     /// 설문 데이터 주인
     mapping (uint256 => address) surveyIndexToOwner;
     /// 상품 데이터 주인
@@ -63,9 +64,10 @@ contract SurveyBase is SurveyAccessControl {
     /// 영수증 데이터 주인
     mapping (uint256 => address) receiptIndexToOwner;
 
-    /*** Surveys ***/
+    /*** SURVEYS ***/
     
-    /*** Receipts ***/
+    /*** RECEIPTS ***/
+
     // 유저가 요청한 설문 조사 영수증 리스트
     mapping (address => uint256[]) surveyRequestReceiptList;    
     // 유저가 응답한 설문 조사 영수증 리스트
@@ -80,7 +82,14 @@ contract SurveyBase is SurveyAccessControl {
     mapping (address => uint256[]) productSellReceiptList;
 
     
-    /// 설문 생성
+    /**
+    * @dev Create Survey 
+    * @param _requestPrice 설문 등록 요청 가격.
+    * @param _sellPrice 설문 판매시 판매 가격.
+    * @param _questionCount 설문 질문 개수.
+    * @param _isSell 설문 판매 여부
+    * @return A uint256 설문 구조체 배열에 들어간 Index 반환
+    */
     function _createSurvey(
         uint256 _requestPrice,
         uint256 _sellPrice,
@@ -108,7 +117,12 @@ contract SurveyBase is SurveyAccessControl {
         return newSurveyId;
     }
 
-    /// 상품 생성
+    /**
+    * @dev 상품 생성 메소드, 스토리지에 상품 추가 .
+    * CreateProduct EVENT 발생
+    * @param _price 상품 판매 가격.
+    * @return A uint256 상품 구조체 배열에 들어간 Index 반환 
+    */
     function _createProduct(
         uint256 _price
     )
@@ -127,7 +141,18 @@ contract SurveyBase is SurveyAccessControl {
         return newProductId;
     }
 
-    /// 영수증 생성
+    /**
+    * @dev 영수증 생성 메소드, 토큰 소비 흐름을 감시
+    * CreateReceipt EVENT 발생
+    * 종류에 따른 매핑에 영수증 index 저장 
+    * @param _title 어떤 오브젝트인지, ex) survey, product.
+    * @param _method 어떤 행동을 했는지, ex) buy, sell.
+    * @param _to 누구의 계좌로 송금 하였는지.
+    * @param _from 누구의 계좌에소 출금 하였는지.
+    * @param _objectId 스토리지에 저장된 object(survey, product) index.
+    * @param _total 총 금액.
+    * @return A uint256 영수증 구조체 배열에 들어간 Index 반환 
+    */
     function _createReceipt(
         ReceiptTitles _title,
         ReceiptMethods _method,

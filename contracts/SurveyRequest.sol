@@ -3,6 +3,7 @@ pragma solidity ^0.5.0;
 import "./SurveyWallet.sol";
 
 contract SurveyRequest is SurveyWallet {
+    uint256[] tempList;
     mapping (uint256 => uint256) public surveyRequestPrice;
 
     function createSurvey(
@@ -28,14 +29,19 @@ contract SurveyRequest is SurveyWallet {
                 newSurveyId,
                 requestPrice
             );
-            // 5. 관련 매핑 저장
         }else {
             return false;
         }
 
     }
 
-    // function getRequestSurveyList() public returns (uint256[] memory) {
-    //     return ownershipSurveyList[msg.sender];
-    // }
+    function getRequestSurveyList() public returns (uint256[] memory) {
+        uint256[] memory resultList;
+        uint256[] memory receiptIndexList = getSurveyRequestReceiptList();
+        tempList = resultList;
+        for(uint i = 0 ; i < surveyRequestReceiptList[msg.sender].length ; i++) {
+            tempList.push(receipts[receiptIndexList[i]].objectId);
+        }
+        return tempList;
+    }
 }
