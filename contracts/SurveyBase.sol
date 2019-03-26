@@ -15,6 +15,9 @@ contract SurveyBase is SurveyAccessControl {
     struct Survey {
         uint256 requestPrice;       // 설문 등록 가격
         uint256 sellPrice;          // 설문 판매 가격
+        uint256 maximumCount;       // 최대 응답자 수
+        uint256 currentCount;       // 현재 응답자 수
+        uint256 createdAt;          // 등록 날짜
         uint8   questionCount;      // 질문 개수
         bool    isSell;             // 팔지 말지 
         // bytes32 hashData;       // DB 데이터 변조 여부 확인
@@ -83,7 +86,7 @@ contract SurveyBase is SurveyAccessControl {
 
     
     /**
-    * @dev Create Survey 
+    * @dev Create Survey(internal)
     * @param _requestPrice 설문 등록 요청 가격.
     * @param _sellPrice 설문 판매시 판매 가격.
     * @param _questionCount 설문 질문 개수.
@@ -93,6 +96,8 @@ contract SurveyBase is SurveyAccessControl {
     function _createSurvey(
         uint256 _requestPrice,
         uint256 _sellPrice,
+        uint256 _maximumCount,
+        uint256 _currentCount,
         uint8   _questionCount,
         bool    _isSell
         // bytes32 _hashData
@@ -103,6 +108,9 @@ contract SurveyBase is SurveyAccessControl {
         Survey memory _survey = Survey({
             requestPrice:   _requestPrice,
             sellPrice:      _sellPrice,
+            maximumCount:   _maximumCount,
+            currentCount:   _currentCount,
+            createdAt:      now,
             questionCount:  _questionCount,
             isSell:         _isSell
             //hashData: _hashData
