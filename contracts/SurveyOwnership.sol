@@ -1,9 +1,9 @@
 pragma solidity ^0.5.0;
 
-import "./SurveyToken.sol";
+import "./SurveyBase.sol";
 import "../node_modules/openzeppelin-solidity/contracts/access/Roles.sol";
 
-contract SurveySubscribeRole is SurveyToken {
+contract SurveyOwnership is SurveyBase {
     using Roles for Roles.Role;
 
     event SubscriberAdded(uint256 surveyId, address indexed account);
@@ -11,10 +11,20 @@ contract SurveySubscribeRole is SurveyToken {
 
     mapping (uint256 => Roles.Role) private _surveyToSubscribers;
 
+    /*** Only Onwer ***/  
     modifier onlySurveyOwner(uint256 _surveyId) {
         require(surveyIndexToOwner[_surveyId] == msg.sender);
         _;
     }
+    modifier onlyProductOwner(uint256 _productId) {
+        require(productIndexToOwner[_productId] == msg.sender);
+        _;
+    }
+    modifier onlyReceiptOwner(uint256 _receiptId) {
+        require(receiptIndexToOwner[_receiptId] == msg.sender);
+        _;
+    }
+
     
     modifier onlySubscriber(uint256 _surveyId) {
         require(isSubscriber(_surveyId, msg.sender));
