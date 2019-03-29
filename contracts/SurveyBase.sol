@@ -6,10 +6,12 @@ contract SurveyBase is SurveyAccessControl {
     /*** EVENT ***/
     /** @dev 설문 생성 이벤트 */
     event CreateSurvey(uint256 surveyId, address owner);
-    /** @dev 상품 생성 이벤트 */
-    event CreateProduct(uint256 productId, address owner);
     /** @dev 영수증 생성 이벤트 */
     event CreateReceipt(uint256 ReceiptId, address owner);
+    /** @dev 기부 단체 생성 이벤트 */
+    event CreateFoundation(uint256 foundationId, address owner);
+    /** @dev 상품 생성 이벤트 */
+    event CreateProduct(uint256 productId, address owner);
 
     /*** DATA TYPES ***/
     struct Survey {
@@ -23,8 +25,12 @@ contract SurveyBase is SurveyAccessControl {
         // bytes32 hashData;       // DB 데이터 변조 여부 확인
     }
 
-    struct Product {
-        uint256 price;
+    struct Foundation {
+        uint256 currentAmount;
+        uint256 maximumAmount;
+        uint256 createdAt;
+        uint256 closedAt;
+        bool    isAchieved;
     }
 
     struct Receipt {
@@ -36,7 +42,10 @@ contract SurveyBase is SurveyAccessControl {
         uint256 total;
         uint256 date;
     }
-
+    
+    struct Product {
+        uint256 price;
+    }
     /*** CONSTANTS ***/
     // survey constants
     uint256 public constant PRICE_PER_QUESTION = 100;
@@ -44,33 +53,36 @@ contract SurveyBase is SurveyAccessControl {
     // receipt constants
     enum ReceiptTitles {
         Survey,
+        Foundation,
         Product
     }
-
+    
     enum ReceiptMethods {
         Request,
         Response,
+        Donate,
         Buy,
         Sell
     }
 
     /*** STORAGE ***/
-    Survey[] surveys;
-    Product[] products;
-    Receipt[] receipts;
+    Survey[]        surveys;
+    Receipt[]       receipts;
+    Foundation[]    foundations;
+    Product[]       products;
 
     /*** DATA's OWNERSHIP ***/
     /// 설문 데이터 주인
     mapping (uint256 => address) surveyIndexToOwner;
-    /// 상품 데이터 주인
-    mapping (uint256 => address) productIndexToOwner;
     /// 영수증 데이터 주인
     mapping (uint256 => address) receiptIndexToOwner;
-
+    /// 도네이션 모금함 주인
+    mapping (uint256 => address) foundationIndexToOwner;
+    /// 상품 데이터 주인
+    mapping (uint256 => address) productIndexToOwner;
     /*** SURVEYS ***/
     
     /*** RECEIPTS ***/
-
     // 유저가 요청한 설문 조사 영수증 리스트
     mapping (address => uint256[]) surveyRequestReceiptList;    
     // 유저가 응답한 설문 조사 영수증 리스트
@@ -79,6 +91,8 @@ contract SurveyBase is SurveyAccessControl {
     mapping (address => uint256[]) surveyBuyReceiptList;
     // 유저가 판매한 설문 조사 영수증 리스트
     mapping (address => uint256[]) surveySellReceiptList;
+    // 유저가 기부한 금액 영수증 리스트
+    mapping (address => uint256[]) foundationDonateReceiptList;
     // 유저가 구매한 상품 영수증 리스트
     mapping (address => uint256[]) productBuyReceiptList;
     // 유저가 판매한 상품 영수증 리스트
@@ -123,30 +137,6 @@ contract SurveyBase is SurveyAccessControl {
         emit CreateSurvey(newSurveyId, msg.sender);
 
         return newSurveyId;
-    }
-
-    /**
-    * @dev 상품 생성 메소드, 스토리지에 상품 추가 .
-    * CreateProduct EVENT 발생
-    * @param _price 상품 판매 가격.
-    * @return A uint256 상품 구조체 배열에 들어간 Index 반환 
-    */
-    function _createProduct(
-        uint256 _price
-    )
-        internal
-        returns (uint256)
-    {
-        Product memory _product = Product({
-            price: _price
-        });
-        uint256 newProductId = products.push(_product) - 1;
-
-        productIndexToOwner[newProductId] = msg.sender;
-
-        emit CreateProduct(newProductId, msg.sender);
-
-        return newProductId;
     }
 
     /**
@@ -196,6 +186,13 @@ contract SurveyBase is SurveyAccessControl {
             }else {
                 revert();
             }
+        // 기부 단체인 경우
+        }else if(_title == ReceiptTitles.Foundation){
+            if(_method == ReceiptMethods.Donate) {
+                foundationDonateReceiptList[msg.sender].push(newReceiptId);
+            }else {
+                revert();
+            }
         // 상품인 경우
         }else if(_title == ReceiptTitles.Product) {
             if(_method == ReceiptMethods.Buy) {
@@ -212,4 +209,61 @@ contract SurveyBase is SurveyAccessControl {
         emit CreateReceipt(newReceiptId, msg.sender);
         return newReceiptId;
     }
+
+    /**
+    * @dev 기부단체 생성 메소드 
+    * @param _maximumAmount 모금 목표 금액 .
+    * @param _closedAt 모금 종료 시간, UNIX Timestamp
+    * @return A uint256 기부단체 구조체 배열에 들어간 Index 반환 
+    */
+    function _createFoundation(
+        uint256 _maximumAmount,
+        uint256 _closedAt
+    )
+        internal
+        returns (uint256)
+    {
+        Foundation memory _foundation = Foundation({
+            currentAmount:  0,
+            maximumAmount:  _maximumAmount,
+            createdAt:      now,
+            closedAt:       _closedAt,
+            isAchieved:     false
+        });
+
+        uint256 newFoundationId = foundations.push(_foundation) - 1;
+
+        foundationIndexToOwner[newFoundationId] = msg.sender;
+
+        emit CreateFoundation(newFoundationId, msg.sender);
+
+        return newFoundationId;
+    }
+
+
+
+    /**
+    * @dev 상품 생성 메소드, 스토리지에 상품 추가 .
+    * CreateProduct EVENT 발생
+    * @param _price 상품 판매 가격.
+    * @return A uint256 상품 구조체 배열에 들어간 Index 반환 
+    */
+    function _createProduct(
+        uint256 _price
+    )
+        internal
+        returns (uint256)
+    {
+        Product memory _product = Product({
+            price: _price
+        });
+        uint256 newProductId = products.push(_product) - 1;
+
+        productIndexToOwner[newProductId] = msg.sender;
+
+        emit CreateProduct(newProductId, msg.sender);
+
+        return newProductId;
+    }
+
 }

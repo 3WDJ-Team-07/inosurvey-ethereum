@@ -4,9 +4,6 @@ contract SurveyAccessControl {
     /*** ADDRESSES ***/
     address public developerAddress;
     address public tokenAddress;
-    
-    // /*** CONTRACT ***/
-    // SurveyTokenInterface public token;
 
     /*** CONTRACT LIFECYCLE ***/
     bool public paused = false;
