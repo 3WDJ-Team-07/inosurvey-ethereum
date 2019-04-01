@@ -5,6 +5,7 @@ import "./SurveyOwnership.sol";
 
 contract SurveyWallet is SurveyOwnership, StandardToken { 
     uint256[] resultList;
+
     /// 영수증의 모든 정보 반환
     function getReceiptDetail(uint256 _receiptId) 
         public 
@@ -36,26 +37,30 @@ contract SurveyWallet is SurveyOwnership, StandardToken {
     }
     /// 내가 응답한 설문 영수증의 Index List 반환
     function getSurveyResponseReceiptList() public view returns (uint256[] memory) {
-        return surveyRequestReceiptList[msg.sender];
+        return surveyResponseReceiptList[msg.sender];
     }
     /// 내가 구매한 설문 영수증의 Index List 반환
     function getSurveyBuyReceiptList() public view returns (uint256[] memory) {
-        return surveyRequestReceiptList[msg.sender];
+        return surveyBuyReceiptList[msg.sender];
     }
     /// 내가 판매한 설문 영수증의 Index List 반환
     function getSurveySellReceiptList() public view returns (uint256[] memory) {
-        return surveyRequestReceiptList[msg.sender];
+        return surveySellReceiptList[msg.sender];
+    }
+    /// 내가 기부한 기부 영수증의 Index List 반환
+    function getFoundationDonateReceiptList() public view returns (uint256[] memory) {
+        return foundationDonateReceiptList[msg.sender];
     }
     /// 내가 구매한 상품 영수증의 상품 Index List 반환
     function getProductBuyReceiptList() public view returns (uint256[] memory) {
-        return surveyRequestReceiptList[msg.sender];
+        return productBuyReceiptList[msg.sender];
     }
     /// 내가 판매한 상품 영수증의 Index List 반환
     function getProductSellReceiptList() public view returns (uint256[] memory) {
-        return surveyRequestReceiptList[msg.sender];
+        return productSellReceiptList[msg.sender];
     }
 
-    /** TokenTransfer Internal Functions **/
+    /*** TokenTransfer Internal Functions ***/
     /// msg.sender => EA
     function _tranferTokenFromUserToThis(uint256 _value) internal returns (bool) {
         _transfer(msg.sender, address(this), _value);
@@ -70,6 +75,12 @@ contract SurveyWallet is SurveyOwnership, StandardToken {
     /// EA => msg.sender
     function _transferTokenFromThisToUser(uint256 _value) internal returns (bool) {
         _transfer(address(this), msg.sender, _value);
+        return true;
+    }
+
+    /// EA => Foundation address
+    function _transferTokenFromThisToFoundation(address _foundationAddr, uint256 _value) internal returns (bool) {
+        _transfer(address(this), _foundationAddr, _value);
         return true;
     }
 }

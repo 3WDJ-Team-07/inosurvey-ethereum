@@ -4,7 +4,6 @@ import "./SurveyWallet.sol";
 
 contract SurveyRequest is SurveyWallet {
     uint256[] tempList;
-    mapping (uint256 => uint256) public surveyRequestPrice;
 
     /**
     * @dev create Survey(public)
@@ -16,8 +15,9 @@ contract SurveyRequest is SurveyWallet {
     * @param _questionCount 설문 질문 개수
     * @return A bool 성공 여부 반환 
     */
-    function createSurvey(
+    function requestSurvey(
         uint256 _maximumCount,
+        uint256 _foundationId,
         uint8   _questionCount
         // bytes32 _hashData
     ) 
@@ -35,9 +35,11 @@ contract SurveyRequest is SurveyWallet {
                 0, 
                 _maximumCount,
                 0,
+                _foundationId,
                 _questionCount, 
                 false
             );
+
             // 4. 영수증 발급
             _createReceipt(
                 ReceiptTitles.Survey, 
@@ -66,6 +68,11 @@ contract SurveyRequest is SurveyWallet {
         return tempList;
     }
 
+    /**
+    * @dev 설문 조사 상세 정보 반환
+    * @param _surveyId 블록체인 Sotrage에 저장된 설문 조사 인덱스
+    * @return A uint256 등록 설문 리스트의 DB primary key 반환 
+    */
     function getSurveyRequestDetail(uint256 _surveyId) 
         public
         view 

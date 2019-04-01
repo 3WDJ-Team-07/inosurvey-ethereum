@@ -11,7 +11,7 @@ contract SurveyOwnership is SurveyBase {
 
     mapping (uint256 => Roles.Role) private _surveyToSubscribers;
 
-    /*** Only Onwer ***/  
+    /*** OWNERSHIP ***/  
     modifier onlySurveyOwner(uint256 _surveyId) {
         require(surveyIndexToOwner[_surveyId] == msg.sender);
         _;
@@ -20,17 +20,20 @@ contract SurveyOwnership is SurveyBase {
         require(productIndexToOwner[_productId] == msg.sender);
         _;
     }
+    modifier onlyFoundationOwner(uint256 _foundationId) {
+        require(foundationIndexToOwner[_foundationId] == msg.sender);
+        _;
+    }
     modifier onlyReceiptOwner(uint256 _receiptId) {
         require(receiptIndexToOwner[_receiptId] == msg.sender);
         _;
     }
-
-    
     modifier onlySubscriber(uint256 _surveyId) {
         require(isSubscriber(_surveyId, msg.sender));
         _;
     }
 
+    /***  SURVEY ROLE ***/
     function isSubscriber(uint256 _surveyId, address _account) public view returns (bool) {
         return _surveyToSubscribers[_surveyId].has(_account);
     }
