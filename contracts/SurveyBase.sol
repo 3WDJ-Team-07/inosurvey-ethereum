@@ -82,6 +82,7 @@ contract SurveyBase is SurveyAccessControl {
     mapping (uint256 => address) productIndexToOwner;
     
     /*** SURVEYS ***/
+    // 어떤 설문조사가 어떤 기부단체에 기부되는지?
     mapping (uint256 => uint256) surveyDonateToFoundation;
 
     /*** RECEIPTS ***/
@@ -233,7 +234,7 @@ contract SurveyBase is SurveyAccessControl {
             maximumAmount:  _maximumAmount,
             createdAt:      now,
             closedAt:       _closedAt,
-            isAchieved:     false
+            isAchieved:     true
         });
 
         uint256 newFoundationId = foundations.push(_foundation) - 1;
