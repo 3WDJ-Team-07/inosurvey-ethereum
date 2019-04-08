@@ -26,26 +26,27 @@ contract SurveyBase is SurveyAccessControl {
     }
 
     struct Foundation {
-        uint256 currentAmount;
-        uint256 maximumAmount;
-        uint256 createdAt;
-        uint256 closedAt;
-        bool    isAchieved;
+        uint256 currentAmount;      // 현재 모금 액수
+        uint256 maximumAmount;      // 목표 모금 액스
+        uint256 createdAt;          // 만들어진 시간
+        uint256 closedAt;           // 마감 시간
+        bool    isAchieved;         // 모금 여부
     }
 
     struct Receipt {
-        ReceiptTitles title;
-        ReceiptMethods method;
-        address to;
-        address from;
-        uint256 objectId;
-        uint256 total;
-        uint256 date;
+        ReceiptTitles title;        // 영수증 타이틀
+        ReceiptMethods method;      // 영수증 행동
+        address to;                 // 누구에게 전송했는지
+        address from;               // 누구의 계좌에서
+        uint256 objectId;           // 관련 오브젝트 indexId
+        uint256 total;              // 전송량
+        uint256 createdAt;          // 날짜
     }
     
     struct Product {
         uint256 price;
     }
+
     /*** CONSTANTS ***/
     // survey constants
     uint256 public constant PRICE_PER_QUESTION = 100;
@@ -84,7 +85,7 @@ contract SurveyBase is SurveyAccessControl {
     /*** SURVEYS ***/
     // 어떤 설문조사가 어떤 기부단체에 기부되는지?
     mapping (uint256 => uint256) surveyDonateToFoundation;
-
+    
     /*** RECEIPTS ***/
     // 유저가 요청한 설문 조사 영수증 리스트
     mapping (address => uint256[]) surveyRequestReceiptList;    
@@ -106,6 +107,9 @@ contract SurveyBase is SurveyAccessControl {
     * @dev Create Survey(internal)
     * @param _requestPrice 설문 등록 요청 가격.
     * @param _sellPrice 설문 판매시 판매 가격.
+    * @param _maximumCount 설문 판매 여부.
+    * @param _currentCount 설문 판매 여부.
+    * @param _isSell 자동 기부되는 기부단체 Index.
     * @param _questionCount 설문 질문 개수.
     * @param _isSell 설문 판매 여부
     * @return A uint256 설문 구조체 배열에 들어간 Index 반환
@@ -116,6 +120,7 @@ contract SurveyBase is SurveyAccessControl {
         uint256 _maximumCount,
         uint256 _currentCount,
         uint256 _foundationId,
+        uint256 _createdAt,
         uint8   _questionCount,
         bool    _isSell
         // bytes32 _hashData
@@ -128,7 +133,7 @@ contract SurveyBase is SurveyAccessControl {
             sellPrice:      _sellPrice,
             maximumCount:   _maximumCount,
             currentCount:   _currentCount,
-            createdAt:      now,
+            createdAt:      _createdAt,
             questionCount:  _questionCount,
             isSell:         _isSell
             //hashData: _hashData
@@ -158,24 +163,25 @@ contract SurveyBase is SurveyAccessControl {
     * @return A uint256 영수증 구조체 배열에 들어간 Index 반환 
     */
     function _createReceipt(
-        ReceiptTitles _title,
-        ReceiptMethods _method,
-        address _to,
-        address _from,
-        uint256 _objectId,
-        uint256 _total
+        ReceiptTitles   _title,
+        ReceiptMethods  _method,
+        address         _to,
+        address         _from,
+        uint256         _objectId,
+        uint256         _total,
+        uint256         _createdAt
     )
         internal
         returns (uint256)
     {
         Receipt memory _receipt = Receipt({
-            title: _title,
-            method: _method,
-            to: _to,
-            from: _from,
-            objectId: _objectId,
-            total: _total,
-            date: now
+            title:      _title,
+            method:     _method,
+            to:         _to,
+            from:       _from,
+            objectId:   _objectId,
+            total:      _total,
+            createdAt:  _createdAt
         });
         uint256 newReceiptId = receipts.push(_receipt) - 1;
         receiptIndexToOwner[newReceiptId] = msg.sender;
@@ -223,18 +229,21 @@ contract SurveyBase is SurveyAccessControl {
     * @return A uint256 기부단체 구조체 배열에 들어간 Index 반환 
     */
     function _createFoundation(
+        uint256 _currentAmount,
         uint256 _maximumAmount,
-        uint256 _closedAt
+        uint256 _createdAt,
+        uint256 _closedAt,
+        bool    _isAchieved
     )
         internal
         returns (uint256)
     {
         Foundation memory _foundation = Foundation({
-            currentAmount:  0,
+            currentAmount:  _currentAmount,
             maximumAmount:  _maximumAmount,
-            createdAt:      now,
+            createdAt:      _createdAt,
             closedAt:       _closedAt,
-            isAchieved:     true
+            isAchieved:     _isAchieved
         });
 
         uint256 newFoundationId = foundations.push(_foundation) - 1;

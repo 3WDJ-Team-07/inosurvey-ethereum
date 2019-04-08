@@ -3,7 +3,6 @@ pragma solidity ^0.5.0;
 contract SurveyAccessControl {
     /*** ADDRESSES ***/
     address public developerAddress;
-    address public tokenAddress;
 
     /*** CONTRACT LIFECYCLE ***/
     bool public paused = false;

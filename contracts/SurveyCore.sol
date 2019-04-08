@@ -1,8 +1,8 @@
 pragma solidity ^0.5.0;
 
-import "./SurveyRequest.sol";
+import "./SurveyFoundation.sol";
 
-contract SurveyCore is SurveyRequest {
+contract SurveyCore is SurveyFoundation {
     
     constructor () public {
         paused = false;
