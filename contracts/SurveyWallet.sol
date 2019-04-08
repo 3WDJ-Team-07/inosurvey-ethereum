@@ -6,7 +6,17 @@ import "./SurveyOwnership.sol";
 contract SurveyWallet is SurveyOwnership, StandardToken { 
     uint256[] resultList;
 
-    /// 영수증의 모든 정보 반환
+    /**
+    * @dev Index에 해당하는 영수증 상세정보 반환
+    * @param _receiptId 영수증 IndexId
+    * @return ReceiptTitle uint256 enum 인덱스 반환. 설문인지, 상품인지
+    * @return ReceiptMethod uint256 enum 인덱스 반환, 요청, 구매 등..
+    * @return to address 누구에게
+    * @return from address 누구로부터
+    * @return objectId uint256 어떤 오브젝트를?
+    * @return total uint256 총 금액
+    * @return date uint256 생성 날짜
+    */
     function getReceiptDetail(uint256 _receiptId) 
         public 
         view
@@ -28,37 +38,38 @@ contract SurveyWallet is SurveyOwnership, StandardToken {
             receipts[_receiptId].from,
             receipts[_receiptId].objectId,
             receipts[_receiptId].total, 
-            receipts[_receiptId].date 
+            receipts[_receiptId].createdAt
         );
     }
-    /// 내가 요청한 설문 영수증의 Index List 반환
+    /** @dev 내가 요청한 설문 영수증의 Index List 반환 */
     function getSurveyRequestReceiptList() public view returns (uint256[] memory) {
         return surveyRequestReceiptList[msg.sender];
     }
-    /// 내가 응답한 설문 영수증의 Index List 반환
+    /** @dev 내가 응답한 설문 영수증의 Index List 반환 */
     function getSurveyResponseReceiptList() public view returns (uint256[] memory) {
         return surveyResponseReceiptList[msg.sender];
     }
-    /// 내가 구매한 설문 영수증의 Index List 반환
+    /** @dev 내가 구매한 설문 영수증의 Index List 반환 */
     function getSurveyBuyReceiptList() public view returns (uint256[] memory) {
         return surveyBuyReceiptList[msg.sender];
     }
-    /// 내가 판매한 설문 영수증의 Index List 반환
+    /** @dev 내가 판매한 설문 영수증의 Index List 반환 */
     function getSurveySellReceiptList() public view returns (uint256[] memory) {
         return surveySellReceiptList[msg.sender];
     }
-    /// 내가 기부한 기부 영수증의 Index List 반환
+    /** @dev 내가 기부한 기부 영수증의 Index List 반환 */
     function getFoundationDonateReceiptList() public view returns (uint256[] memory) {
         return foundationDonateReceiptList[msg.sender];
     }
-    /// 내가 구매한 상품 영수증의 상품 Index List 반환
+    /** @dev 내가 구매한 상품 영수증의 상품 Index List 반환 */
     function getProductBuyReceiptList() public view returns (uint256[] memory) {
         return productBuyReceiptList[msg.sender];
     }
-    /// 내가 판매한 상품 영수증의 Index List 반환
+    /** @dev 내가 판매한 상품 영수증의 Index List 반환 */
     function getProductSellReceiptList() public view returns (uint256[] memory) {
         return productSellReceiptList[msg.sender];
     }
+
 
     /*** TokenTransfer Internal Functions ***/
     /// msg.sender => EA
