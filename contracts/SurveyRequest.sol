@@ -12,12 +12,15 @@ contract SurveyRequest is SurveyWallet {
     * 성공 시 스토리지에 등록
     * 실패 시 false 리턴 
     * @param _maximumCount 설문 최대 응답 가능 인원 수.
-    * @param _questionCount 설문 질문 개수
+    * @param _foundationId 설문 질문 개수.
+    * @param _createdAt 설문 질문 개수.
+    * @param _questionCount 설문 질문 개수.
     * @return A bool 성공 여부 반환 
     */
     function requestSurvey(
         uint256 _maximumCount,
         uint256 _foundationId,
+        uint256 _createdAt,
         uint8   _questionCount
         // bytes32 _hashData
     ) 
@@ -36,19 +39,23 @@ contract SurveyRequest is SurveyWallet {
                 _maximumCount,
                 0,
                 _foundationId,
+                _createdAt,
                 _questionCount, 
                 false
             );
-
+            // 3.1 열람 권한 소유자
+            addSubscriber(newSurveyId, msg.sender);
             // 4. 영수증 발급
             _createReceipt(
                 ReceiptTitles.Survey, 
                 ReceiptMethods.Request, 
                 address(this), 
-                msg.sender, 
+                msg.sender,
                 newSurveyId,
-                requestPrice
+                requestPrice,
+                _createdAt
             );
+            return true;
         }else {
             return false;
         }
@@ -75,7 +82,7 @@ contract SurveyRequest is SurveyWallet {
     */
     function getSurveyRequestDetail(uint256 _surveyId) 
         public
-        view 
+        view
         returns (
             uint256,
             uint256,
