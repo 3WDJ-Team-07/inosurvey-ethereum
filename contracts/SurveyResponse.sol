@@ -11,8 +11,9 @@ contract SurveyResponse is SurveyRequest {
         Survey memory targetSurvey = surveys[_surveyId];
         address foundationAddr = foundationIndexToOwner[surveyDonateToFoundation[_surveyId]];
 
-        uint256 responseReward = targetSurvey.requestPrice / 100 * 40;
-        uint256 donationReward = targetSurvey.requestPrice / 100 * 20;
+        uint256 allReward = targetSurvey.requestPrice / targetSurvey.maximumCount;
+        uint256 responseReward = allReward / 100 * 80;
+        uint256 donationReward = allReward - responseReward;
 
         // 응답 보상 지불 시도
         // 기부 시도
@@ -29,7 +30,8 @@ contract SurveyResponse is SurveyRequest {
                 msg.sender,
                 address(this),
                 _surveyId,
-                responseReward
+                responseReward,
+                now
             );
         }else {
             return false;
@@ -42,7 +44,8 @@ contract SurveyResponse is SurveyRequest {
                 foundationAddr,
                 msg.sender,
                 surveyDonateToFoundation[_surveyId],
-                donationReward
+                donationReward,
+                now
             );
         }else {
             return false;

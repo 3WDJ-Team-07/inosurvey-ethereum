@@ -28,9 +28,13 @@ contract SurveyRequest is SurveyWallet {
         returns (bool)
     {
         // 1. 설문 가격 계산
-        uint256 requestPrice = uint256(_questionCount) * uint256(PRICE_PER_QUESTION);
+        uint256 allPrice = uint256(_questionCount) * uint256(PRICE_PER_QUESTION) * uint256(_maximumCount);
+        uint256 requestPrice = allPrice / 100 * 80;
+        uint256 chargePrice = allPrice - requestPrice;
         // 2. 토큰 전송 시도
-        bool isSuccess = _tranferTokenFromUserToThis(requestPrice);
+        bool isSuccess = _tranferTokenFromUserToThis(allPrice);
+        _transferTokenFromThisToDeveloper(chargePrice);
+
         if(isSuccess) {
             // 3. 설문 생성
             uint256 newSurveyId = _createSurvey(

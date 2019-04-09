@@ -49,7 +49,7 @@ contract SurveyBase is SurveyAccessControl {
 
     /*** CONSTANTS ***/
     // survey constants
-    uint256 public constant PRICE_PER_QUESTION = 100;
+    uint256 public constant PRICE_PER_QUESTION = 10;
 
     // receipt constants
     enum ReceiptTitles {
