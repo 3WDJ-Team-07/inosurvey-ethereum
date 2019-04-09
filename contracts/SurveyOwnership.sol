@@ -38,7 +38,7 @@ contract SurveyOwnership is SurveyBase {
         return _surveyToSubscribers[_surveyId].has(_account);
     }
 
-    function addSubscriber(uint256 _surveyId, address _account) public onlySurveyOwner(_surveyId) {
+    function addSubscriber(uint256 _surveyId, address _account) public {
         _addSubscriber(_surveyId, _account);
     }
 
