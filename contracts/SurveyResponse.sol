@@ -12,7 +12,7 @@ contract SurveyResponse is SurveyRequest {
         address foundationAddr = foundationIndexToOwner[surveyDonateToFoundation[_surveyId]];
 
         uint256 allReward = targetSurvey.requestPrice / targetSurvey.maximumCount;
-        uint256 responseReward = allReward / 100 * 80;
+        uint256 responseReward = allReward * 80 / 100;
         uint256 donationReward = allReward - responseReward;
 
         // 응답 보상 지불 시도

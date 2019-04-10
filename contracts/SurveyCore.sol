@@ -8,5 +8,6 @@ contract SurveyCore is SurveyFoundation {
         paused = false;
         
         developerAddress = msg.sender;
+        
     }
 }

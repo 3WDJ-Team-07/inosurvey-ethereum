@@ -63,7 +63,8 @@ contract SurveyBase is SurveyAccessControl {
         Response,
         Donate,
         Buy,
-        Sell
+        Sell,
+        Reward
     }
 
     /*** STORAGE ***/
@@ -95,6 +96,8 @@ contract SurveyBase is SurveyAccessControl {
     mapping (address => uint256[]) surveyBuyReceiptList;
     // 유저가 판매한 설문 조사 영수증 리스트
     mapping (address => uint256[]) surveySellReceiptList;
+    // 설문 구매시 보너스 영수증 리스트
+    mapping (address => uint256[]) surveyRewardReceiptList;
     // 유저가 기부한 금액 영수증 리스트
     mapping (address => uint256[]) foundationDonateReceiptList;
     // 유저가 구매한 상품 영수증 리스트
@@ -195,6 +198,8 @@ contract SurveyBase is SurveyAccessControl {
                 surveyBuyReceiptList[msg.sender].push(newReceiptId);
             }else if(_method == ReceiptMethods.Sell) {
                 surveySellReceiptList[msg.sender].push(newReceiptId);
+            }else if(_method == ReceiptMethods.Reward) {
+                surveyRewardReceiptList[msg.sender].push(newReceiptId);
             }else {
                 revert();
             }

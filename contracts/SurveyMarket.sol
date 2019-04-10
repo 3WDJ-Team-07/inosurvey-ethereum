@@ -15,7 +15,7 @@ contract SurveyMarket is SurveyResponse {
         surveys[_surveyId].isSell = true;
         return true;
     }
-    
+
     // 설문 판매 등록 취소
     function cancelSurveyMarket(uint256 _surveyId) public returns (bool) {
         surveys[_surveyId].sellPrice = 0;
@@ -31,10 +31,21 @@ contract SurveyMarket is SurveyResponse {
         bool buyIsSuccessed = transfer(surveyIndexToOwner[_surveyId], price);
         
         if(buyIsSuccessed) {
-            
+            _createReceipt(
+                ReceiptTitles.Survey, 
+                ReceiptMethods.Buy, 
+                address(this), 
+                msg.sender, 
+                _surveyId, 
+                price, 
+                now
+            );
         }
         // 구매 생성
+        addSubscriber(_surveyId, msg.sender);
         // 열람 가능한지
+
+        return true;
     }
 
     // 설문 판매 리스트
