@@ -19,7 +19,6 @@ contract SurveyRequest is SurveyWallet {
     */
     function requestSurvey(
         uint256 _maximumCount,
-        uint256 _foundationId,
         uint256 _createdAt,
         uint8   _questionCount
         // bytes32 _hashData
@@ -42,7 +41,6 @@ contract SurveyRequest is SurveyWallet {
                 0, 
                 _maximumCount,
                 0,
-                _foundationId,
                 _createdAt,
                 _questionCount, 
                 false

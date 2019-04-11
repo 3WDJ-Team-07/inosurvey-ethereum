@@ -26,22 +26,21 @@ contract SurveyFoundation is SurveyMarket {
 
     // 기부하기
     function donation(uint256 _foundationId, uint256 _value) public returns (bool) {
-        Foundation memory targetFoundation = foundations[_foundationId];
         address foundationAddr = foundationIndexToOwner[_foundationId];
         // 기부 단체 활성화 여부
-        if(targetFoundation.isAchieved) {
+        if(foundations[_foundationId].isAchieved) {
             // 날짜가 지났으면?
-            if(now > targetFoundation.closedAt) {
-                targetFoundation.isAchieved = false;
+            if(now > foundations[_foundationId].closedAt) {
+                foundations[_foundationId].isAchieved = false;
                 return false;
             }
             // 토큰 전송 시도
-            bool isSuccess = _transferTokenFromUserToFoundation(foundationAddr, _value);
+            bool isSuccess = transfer(foundationAddr, _value);
             if(isSuccess) {
                 // 관련 변수 업데이트
-                targetFoundation.currentAmount += _value;
-                if(targetFoundation.maximumAmount <= targetFoundation.currentAmount) {
-                    targetFoundation.isAchieved = false;
+                foundations[_foundationId].currentAmount += _value;
+                if(foundations[_foundationId].maximumAmount <= foundations[_foundationId].currentAmount) {
+                    foundations[_foundationId].isAchieved = false;
                 }
                 // 영수증 발급
                 _createReceipt(

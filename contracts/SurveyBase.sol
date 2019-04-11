@@ -83,10 +83,6 @@ contract SurveyBase is SurveyAccessControl {
     /// 상품 데이터 주인
     mapping (uint256 => address) productIndexToOwner;
     
-    /*** SURVEYS ***/
-    // 어떤 설문조사가 어떤 기부단체에 기부되는지?
-    mapping (uint256 => uint256) surveyDonateToFoundation;
-    
     /*** RECEIPTS ***/
     // 유저가 요청한 설문 조사 영수증 리스트
     mapping (address => uint256[]) surveyRequestReceiptList;    
@@ -122,7 +118,6 @@ contract SurveyBase is SurveyAccessControl {
         uint256 _sellPrice,
         uint256 _maximumCount,
         uint256 _currentCount,
-        uint256 _foundationId,
         uint256 _createdAt,
         uint8   _questionCount,
         bool    _isSell
@@ -145,8 +140,6 @@ contract SurveyBase is SurveyAccessControl {
         uint256 newSurveyId = surveys.push(_survey) - 1;
 
         surveyIndexToOwner[newSurveyId] = msg.sender;
-        
-        surveyDonateToFoundation[newSurveyId] = _foundationId;
 
         emit CreateSurvey(newSurveyId, msg.sender);
 

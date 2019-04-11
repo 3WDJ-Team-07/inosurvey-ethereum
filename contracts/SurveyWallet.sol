@@ -90,8 +90,8 @@ contract SurveyWallet is SurveyOwnership, StandardToken {
     }
 
     /// EA => Foundation address
-    function _transferTokenFromUserToFoundation(address _foundationAddr, uint256 _value) internal returns (bool) {
-        _transfer(msg.sender, _foundationAddr, _value);
+    function _transferTokenFromThisToFoundation(address _foundationAddr, uint256 _value) internal returns (bool) {
+        _transfer(address(this), _foundationAddr, _value);
         return true;
     }
 }
