@@ -6,54 +6,58 @@ import "../node_modules/openzeppelin-solidity/contracts/access/Roles.sol";
 contract SurveyOwnership is SurveyBase {
     using Roles for Roles.Role;
 
-    event SubscriberAdded(uint256 surveyId, address indexed account);
-    event SubscriberRemoved(uint256 surveyId, address indexed account);
+    event BuyerAdded(uint256 surveyId, address indexed account);
+    event BuyerRemoved(uint256 surveyId, address indexed account);
 
-    mapping (uint256 => Roles.Role) private _surveyToSubscribers;
+    mapping (uint256 => Roles.Role) private _surveyToBuyers;
 
-    /*** OWNERSHIP ***/  
+    /*** OWNERSHIP ***/ 
+    // 설문조사 주인만 
     modifier onlySurveyOwner(uint256 _surveyId) {
         require(surveyIndexToOwner[_surveyId] == msg.sender);
         _;
     }
+    // 상품 주인만 
     modifier onlyProductOwner(uint256 _productId) {
         require(productIndexToOwner[_productId] == msg.sender);
         _;
     }
+    // 기부단체 주인만
     modifier onlyFoundationOwner(uint256 _foundationId) {
         require(foundationIndexToOwner[_foundationId] == msg.sender);
         _;
     }
+    // 영수증 주인만
     modifier onlyReceiptOwner(uint256 _receiptId) {
         require(receiptIndexToOwner[_receiptId] == msg.sender);
         _;
     }
-    modifier onlySubscriber(uint256 _surveyId) {
-        require(isSubscriber(_surveyId, msg.sender));
+
+    modifier onlyBuyer(uint256 _surveyId) {
+        require(isSurveyToBuyer(_surveyId, msg.sender));
         _;
     }
 
     /***  SURVEY ROLE ***/
-    function isSubscriber(uint256 _surveyId, address _account) public view returns (bool) {
-        return _surveyToSubscribers[_surveyId].has(_account);
+    function isSurveyToBuyer(uint256 _surveyId, address _account) public view returns (bool) {
+        return _surveyToBuyers[_surveyId].has(_account);
     }
 
-    function addSubscriber(uint256 _surveyId, address _account) public {
+    function addSubscriber(uint256 _surveyId, address _account) internal {
         _addSubscriber(_surveyId, _account);
     }
 
-    // Security warning!
-    function renounceSubscriber(uint256 _surveyId, address _account) public {
+    function renounceSubscriber(uint256 _surveyId, address _account) internal {
         _removeSubscriber(_surveyId, _account);
     }
 
     function _addSubscriber(uint256 _surveyId, address _account) internal {
-        _surveyToSubscribers[_surveyId].add(_account);
-        emit SubscriberAdded(_surveyId, _account);
+        _surveyToBuyers[_surveyId].add(_account);
+        emit BuyerAdded(_surveyId, _account);
     }
 
     function _removeSubscriber(uint256 _surveyId, address _account) internal {
-        _surveyToSubscribers[_surveyId].remove(_account);
-        emit SubscriberRemoved(_surveyId, _account);
+        _surveyToBuyers[_surveyId].remove(_account);
+        emit BuyerRemoved(_surveyId, _account);
     }
 }

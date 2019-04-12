@@ -53,7 +53,7 @@ contract SurveyMarket is SurveyResponse {
         uint256[] memory resultList;
         tempList = resultList;
 
-        for(uint i ; i < surveys.length ; i++) {
+        for(uint i = 0 ; i < surveys.length ; i++) {
             if(surveys[i].isSell) {
                 tempList.push(i);
             }
@@ -63,6 +63,12 @@ contract SurveyMarket is SurveyResponse {
 
     // 설문 구매 리스트
     function getSurveyBuyList() public returns (uint256[] memory) {
-        
+        uint256[] memory resultList;
+        uint256[] memory receiptIndexList = getSurveyBuyReceiptList();
+        tempList = resultList;
+        for(uint i = 0 ; i < receiptIndexList.length ; i++) {
+            tempList.push(receipts[receiptIndexList[i]].objectId);
+        }
+        return tempList;
     }
 }

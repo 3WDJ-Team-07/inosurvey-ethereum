@@ -12,7 +12,6 @@ contract SurveyRequest is SurveyWallet {
     * 성공 시 스토리지에 등록
     * 실패 시 false 리턴 
     * @param _maximumCount 설문 최대 응답 가능 인원 수.
-    * @param _foundationId 설문 질문 개수.
     * @param _createdAt 설문 질문 개수.
     * @param _questionCount 설문 질문 개수.
     * @return A bool 성공 여부 반환 
@@ -71,7 +70,7 @@ contract SurveyRequest is SurveyWallet {
         uint256[] memory resultList;
         uint256[] memory receiptIndexList = getSurveyRequestReceiptList();
         tempList = resultList;
-        for(uint i = 0 ; i < surveyRequestReceiptList[msg.sender].length ; i++) {
+        for(uint i = 0 ; i < receiptIndexList.length ; i++) {
             tempList.push(receipts[receiptIndexList[i]].objectId);
         }
         return tempList;
