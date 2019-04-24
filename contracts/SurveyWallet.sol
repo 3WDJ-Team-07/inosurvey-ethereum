@@ -38,7 +38,7 @@ contract SurveyWallet is SurveyOwnership, StandardToken {
             receipts[_receiptId].from,
             receipts[_receiptId].objectId,
             receipts[_receiptId].total, 
-            receipts[_receiptId].createdAt
+            receipts[_receiptId].startedAt
         );
     }
     /** @dev 내가 요청한 설문 영수증의 Index List 반환 */

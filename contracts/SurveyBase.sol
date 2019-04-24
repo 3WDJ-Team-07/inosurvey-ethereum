@@ -19,7 +19,7 @@ contract SurveyBase is SurveyAccessControl {
         uint256 sellPrice;          // 설문 판매 가격
         uint256 maximumCount;       // 최대 응답자 수
         uint256 currentCount;       // 현재 응답자 수
-        uint256 createdAt;          // 등록 날짜
+        uint256 startedAt;          // 등록 날짜
         uint8   questionCount;      // 질문 개수
         bool    isSell;             // 팔지 말지 
         // bytes32 hashData;       // DB 데이터 변조 여부 확인
@@ -28,7 +28,7 @@ contract SurveyBase is SurveyAccessControl {
     struct Foundation {
         uint256 currentAmount;      // 현재 모금 액수
         uint256 maximumAmount;      // 목표 모금 액스
-        uint256 createdAt;          // 만들어진 시간
+        uint256 startedAt;          // 만들어진 시간
         uint256 closedAt;           // 마감 시간
         bool    isAchieved;         // 모금 여부
     }
@@ -40,7 +40,7 @@ contract SurveyBase is SurveyAccessControl {
         address from;               // 누구의 계좌에서
         uint256 objectId;           // 관련 오브젝트 indexId
         uint256 total;              // 전송량
-        uint256 createdAt;          // 날짜
+        uint256 startedAt;          // 날짜
     }
     
     struct Product {
@@ -118,7 +118,7 @@ contract SurveyBase is SurveyAccessControl {
         uint256 _sellPrice,
         uint256 _maximumCount,
         uint256 _currentCount,
-        uint256 _createdAt,
+        uint256 _startedAt,
         uint8   _questionCount,
         bool    _isSell
         // bytes32 _hashData
@@ -131,7 +131,7 @@ contract SurveyBase is SurveyAccessControl {
             sellPrice:      _sellPrice,
             maximumCount:   _maximumCount,
             currentCount:   _currentCount,
-            createdAt:      _createdAt,
+            startedAt:      _startedAt,
             questionCount:  _questionCount,
             isSell:         _isSell
             //hashData: _hashData
@@ -165,7 +165,7 @@ contract SurveyBase is SurveyAccessControl {
         address         _from,
         uint256         _objectId,
         uint256         _total,
-        uint256         _createdAt
+        uint256         _startedAt
     )
         internal
         returns (uint256)
@@ -177,7 +177,7 @@ contract SurveyBase is SurveyAccessControl {
             from:       _from,
             objectId:   _objectId,
             total:      _total,
-            createdAt:  _createdAt
+            startedAt:  _startedAt
         });
         uint256 newReceiptId = receipts.push(_receipt) - 1;
         receiptIndexToOwner[newReceiptId] = msg.sender;
@@ -229,7 +229,7 @@ contract SurveyBase is SurveyAccessControl {
     function _createFoundation(
         uint256 _currentAmount,
         uint256 _maximumAmount,
-        uint256 _createdAt,
+        uint256 _startedAt,
         uint256 _closedAt,
         bool    _isAchieved
     )
@@ -239,7 +239,7 @@ contract SurveyBase is SurveyAccessControl {
         Foundation memory _foundation = Foundation({
             currentAmount:  _currentAmount,
             maximumAmount:  _maximumAmount,
-            createdAt:      _createdAt,
+            startedAt:      _startedAt,
             closedAt:       _closedAt,
             isAchieved:     _isAchieved
         });

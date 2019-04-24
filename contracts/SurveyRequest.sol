@@ -12,13 +12,13 @@ contract SurveyRequest is SurveyWallet {
     * 성공 시 스토리지에 등록
     * 실패 시 false 리턴 
     * @param _maximumCount 설문 최대 응답 가능 인원 수.
-    * @param _createdAt 설문 질문 개수.
+    * @param _startedAt 설문 질문 개수.
     * @param _questionCount 설문 질문 개수.
     * @return A bool 성공 여부 반환 
     */
     function requestSurvey(
         uint256 _maximumCount,
-        uint256 _createdAt,
+        uint256 _startedAt,
         uint8   _questionCount
         // bytes32 _hashData
     ) 
@@ -40,7 +40,7 @@ contract SurveyRequest is SurveyWallet {
                 0, 
                 _maximumCount,
                 0,
-                _createdAt,
+                _startedAt,
                 _questionCount, 
                 false
             );
@@ -54,7 +54,7 @@ contract SurveyRequest is SurveyWallet {
                 msg.sender,
                 newSurveyId,
                 requestPrice,
-                _createdAt
+                _startedAt
             );
             return true;
         }else {
@@ -99,7 +99,7 @@ contract SurveyRequest is SurveyWallet {
             surveys[_surveyId].sellPrice,
             surveys[_surveyId].maximumCount,
             surveys[_surveyId].currentCount,
-            surveys[_surveyId].createdAt,
+            surveys[_surveyId].startedAt,
             surveys[_surveyId].questionCount,
             surveys[_surveyId].isSell
         );

@@ -87,7 +87,7 @@ contract SurveyFoundation is SurveyMarket {
         return (
             foundations[_foundationId].currentAmount,
             foundations[_foundationId].maximumAmount,
-            foundations[_foundationId].createdAt,
+            foundations[_foundationId].startedAt,
             foundations[_foundationId].closedAt,
             foundations[_foundationId].isAchieved
         );
