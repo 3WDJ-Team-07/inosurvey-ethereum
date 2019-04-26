@@ -11,8 +11,8 @@ contract SurveyCore is SurveyFoundation {
         mint(msg.sender, 1000000000000);
 
         // burning survey
-        _createSurvey(0, 0, 0, 0, 0, 0, false);
+        requestSurvey(0, now, 0);
         // burning foundation
-        _createFoundation(0, 0, 0, 0, false);
+        createFoundation(0, 0);
     }
 }

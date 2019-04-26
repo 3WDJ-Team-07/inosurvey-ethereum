@@ -12,27 +12,27 @@ contract SurveyFoundation is SurveyMarket {
         uint256 _closedAt
     ) 
         public 
-        returns (bool) 
+        returns (uint256) 
     {
-        _createFoundation(
+        uint256 newFoundationId = _createFoundation(
             0,
             _maximumAmount, 
             now,
             _closedAt,
             true
         );
-        return true;
+        return newFoundationId;
     } 
 
     // 기부하기
-    function donation(uint256 _foundationId, uint256 _value) public returns (bool) {
+    function donation(uint256 _foundationId, uint256 _value) public returns (uint256) {
         address foundationAddr = foundationIndexToOwner[_foundationId];
         // 기부 단체 활성화 여부
         if(foundations[_foundationId].isAchieved) {
             // 날짜가 지났으면?
             if(now > foundations[_foundationId].closedAt) {
                 foundations[_foundationId].isAchieved = false;
-                return false;
+                revert();
             }
             // 토큰 전송 시도
             bool isSuccess = transfer(foundationAddr, _value);
@@ -43,7 +43,7 @@ contract SurveyFoundation is SurveyMarket {
                     foundations[_foundationId].isAchieved = false;
                 }
                 // 영수증 발급
-                _createReceipt(
+                uint256 newReceiptId = _createReceipt(
                     ReceiptTitles.Foundation,
                     ReceiptMethods.Donate,
                     foundationAddr,
@@ -52,12 +52,12 @@ contract SurveyFoundation is SurveyMarket {
                     _value,
                     now
                 );
-                return true;
+                return newReceiptId;
             }else {
-                return false;
+                revert();
             }
         } else {
-            return false;
+            revert();
         }
     }
 

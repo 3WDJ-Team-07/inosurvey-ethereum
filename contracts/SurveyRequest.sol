@@ -23,7 +23,7 @@ contract SurveyRequest is SurveyWallet {
         // bytes32 _hashData
     ) 
         public
-        returns (bool)
+        returns (uint256)
     {
         // 1. 설문 가격 계산
         uint256 allPrice = uint256(_questionCount) * uint256(PRICE_PER_QUESTION) * uint256(_maximumCount);
@@ -47,7 +47,7 @@ contract SurveyRequest is SurveyWallet {
             // 3.1 열람 권한 소유자
             addSubscriber(newSurveyId, msg.sender);
             // 4. 영수증 발급
-            _createReceipt(
+            uint256 newReceiptId = _createReceipt(
                 ReceiptTitles.Survey, 
                 ReceiptMethods.Request, 
                 address(this), 
@@ -56,9 +56,9 @@ contract SurveyRequest is SurveyWallet {
                 requestPrice,
                 _startedAt
             );
-            return true;
+            return newReceiptId;
         }else {
-            return false;
+            revert();
         }
 
     }

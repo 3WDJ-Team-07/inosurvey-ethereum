@@ -24,14 +24,14 @@ contract SurveyMarket is SurveyResponse {
     }
 
     // 설문 구매
-    function buySurvey(uint256 _surveyId) public returns (bool) {
+    function buySurvey(uint256 _surveyId) public returns (uint256) {
         Survey memory targetSurvey = surveys[_surveyId];
         uint256 price = targetSurvey.sellPrice;
         // 토큰 전송 시도
         bool buyIsSuccessed = transfer(surveyIndexToOwner[_surveyId], price);
         
         if(buyIsSuccessed) {
-            _createReceipt(
+            uint256 newReceiptId = _createReceipt(
                 ReceiptTitles.Survey, 
                 ReceiptMethods.Buy, 
                 address(this), 
@@ -40,12 +40,12 @@ contract SurveyMarket is SurveyResponse {
                 price, 
                 now
             );
+            // 구매 생성
+            addSubscriber(_surveyId, msg.sender);
+            // 열람 가능한지
+            return newReceiptId;
         }
-        // 구매 생성
-        addSubscriber(_surveyId, msg.sender);
-        // 열람 가능한지
-
-        return true;
+        
     }
 
     // 설문 판매 리스트
