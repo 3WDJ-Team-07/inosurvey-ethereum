@@ -70,6 +70,10 @@ contract SurveyWallet is SurveyOwnership, StandardToken {
         return productSellReceiptList[msg.sender];
     }
 
+    function faucet(address to, uint256 value) public onlyDeveloper returns (bool)  {
+        mint(to, value);
+        return true;
+    }
 
     /*** TokenTransfer Internal Functions ***/
     /// msg.sender => EA
