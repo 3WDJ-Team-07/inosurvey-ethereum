@@ -27,12 +27,11 @@ contract SurveyRequest is SurveyWallet {
     {
         // 1. 설문 가격 계산
         uint256 allPrice = uint256(_questionCount) * uint256(PRICE_PER_QUESTION) * uint256(_maximumCount);
-        uint256 requestPrice = allPrice / 100 * 80;
-        uint256 chargePrice = allPrice - requestPrice;
+        uint256 requestPrice = allPrice * 80 / 100 ;
         uint256 rewardPirce = requestPrice / _maximumCount * 80 / 100;
         // 2. 토큰 전송 시도
         bool isSuccess = _tranferTokenFromUserToThis(allPrice);
-        _transferTokenFromThisToDeveloper(chargePrice);
+        _transferTokenFromThisToDeveloper(allPrice - requestPrice);
 
         if(isSuccess) {
             // 3. 설문 생성
@@ -97,15 +96,16 @@ contract SurveyRequest is SurveyWallet {
             bool
         )
     {
+        Survey memory survey = surveys[_surveyId];
         return (
-            surveys[_surveyId].requestPrice,
-            surveys[_surveyId].sellPrice,
-            surveys[_surveyId].rewardPrice,
-            surveys[_surveyId].maximumCount,
-            surveys[_surveyId].currentCount,
-            surveys[_surveyId].startedAt,
-            surveys[_surveyId].questionCount,
-            surveys[_surveyId].isSell
+            survey.requestPrice,
+            survey.sellPrice,
+            survey.rewardPrice,
+            survey.maximumCount,
+            survey.currentCount,
+            survey.startedAt,
+            survey.questionCount,
+            survey.isSell
         );
     }
 }
