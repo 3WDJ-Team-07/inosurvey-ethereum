@@ -92,6 +92,7 @@ contract SurveyRequest is SurveyWallet {
             uint256,
             uint256,
             uint256,
+            uint256,
             uint8,
             bool
         )
@@ -99,6 +100,7 @@ contract SurveyRequest is SurveyWallet {
         return (
             surveys[_surveyId].requestPrice,
             surveys[_surveyId].sellPrice,
+            surveys[_surveyId].rewardPrice,
             surveys[_surveyId].maximumCount,
             surveys[_surveyId].currentCount,
             surveys[_surveyId].startedAt,
