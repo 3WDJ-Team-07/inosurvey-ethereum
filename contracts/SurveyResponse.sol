@@ -4,13 +4,10 @@ import "./SurveyRequest.sol";
 
 contract SurveyResponse is SurveyRequest {
     function responseSurvey(uint256 _surveyId) public returns (uint256) {
-        uint256 reward = surveys[_surveyId].requestPrice / surveys[_surveyId].maximumCount * 80 / 100;
-        // uint256 donationReward = allReward - responseReward;
 
         // 응답 보상 지불 시도
         // 기부 시도
-        bool isSuccess = _transferTokenFromThisToUser(reward);
-        // bool donationIsSuccessed = _transferTokenFromThisToFoundation(foundationAddr, donationReward);
+        bool isSuccess = _transferTokenFromThisToUser(surveys[_surveyId].rewardPrice);
 
         if(isSuccess) {
             // 응답인원 추가
@@ -22,7 +19,7 @@ contract SurveyResponse is SurveyRequest {
                 msg.sender,
                 address(this),
                 _surveyId,
-                reward,
+                surveys[_surveyId].rewardPrice,
                 now
             );
             return newReceiptId;

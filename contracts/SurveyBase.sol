@@ -17,6 +17,7 @@ contract SurveyBase is SurveyAccessControl {
     struct Survey {
         uint256 requestPrice;       // 설문 등록 가격
         uint256 sellPrice;          // 설문 판매 가격
+        uint256 rewardPrice;        // 설문 보상 가격
         uint256 maximumCount;       // 최대 응답자 수
         uint256 currentCount;       // 현재 응답자 수
         uint256 startedAt;          // 등록 날짜
@@ -116,6 +117,7 @@ contract SurveyBase is SurveyAccessControl {
     function _createSurvey(
         uint256 _requestPrice,
         uint256 _sellPrice,
+        uint256 _rewardPrice,
         uint256 _maximumCount,
         uint256 _currentCount,
         uint256 _startedAt,
@@ -129,6 +131,7 @@ contract SurveyBase is SurveyAccessControl {
         Survey memory _survey = Survey({
             requestPrice:   _requestPrice,
             sellPrice:      _sellPrice,
+            rewardPrice:    _rewardPrice,
             maximumCount:   _maximumCount,
             currentCount:   _currentCount,
             startedAt:      _startedAt,

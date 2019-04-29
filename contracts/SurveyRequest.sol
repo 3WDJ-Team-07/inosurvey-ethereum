@@ -29,6 +29,7 @@ contract SurveyRequest is SurveyWallet {
         uint256 allPrice = uint256(_questionCount) * uint256(PRICE_PER_QUESTION) * uint256(_maximumCount);
         uint256 requestPrice = allPrice / 100 * 80;
         uint256 chargePrice = allPrice - requestPrice;
+        uint256 rewardPirce = requestPrice / _maximumCount * 80 / 100;
         // 2. 토큰 전송 시도
         bool isSuccess = _tranferTokenFromUserToThis(allPrice);
         _transferTokenFromThisToDeveloper(chargePrice);
@@ -37,7 +38,8 @@ contract SurveyRequest is SurveyWallet {
             // 3. 설문 생성
             uint256 newSurveyId = _createSurvey(
                 requestPrice, 
-                0, 
+                0,
+                rewardPirce,
                 _maximumCount,
                 0,
                 _startedAt,
