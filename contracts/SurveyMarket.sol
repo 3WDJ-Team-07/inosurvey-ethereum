@@ -3,7 +3,12 @@ pragma solidity ^0.5.0;
 import "./SurveyResponse.sol";
 
 contract SurveyMarket is SurveyResponse {
-    uint256[] tempList;
+    /** @dev 설문 판매 등록 이벤트 */
+    event AddSurveyMarket(uint256 surveyId, uint256 price);    
+    /** @dev 설문 판매 취소 이벤트 */
+    event CancelSurveyMarket(uint256 surveyId);
+    /** @dev 설문 구매 이벤트 */
+    event BuySurvey(uint256 surveyId, uint256 price);
 
     // 설문 판매 등록
     function addSurveyMarket(uint256 _surveyId, uint256 _price) 
@@ -13,6 +18,7 @@ contract SurveyMarket is SurveyResponse {
     {
         surveys[_surveyId].sellPrice = _price;
         surveys[_surveyId].isSell = true;
+        emit AddSurveyMarket(_surveyId, _price);
         return true;
     }
 
@@ -20,6 +26,7 @@ contract SurveyMarket is SurveyResponse {
     function cancelSurveyMarket(uint256 _surveyId) public returns (bool) {
         surveys[_surveyId].sellPrice = 0;
         surveys[_surveyId].isSell = false;
+        emit CancelSurveyMarket(_surveyId);
         return true; 
     }
 
@@ -31,6 +38,7 @@ contract SurveyMarket is SurveyResponse {
         bool buyIsSuccessed = transfer(surveyIndexToOwner[_surveyId], price);
         
         if(buyIsSuccessed) {
+            // 구매 생성
             uint256 newReceiptId = _createReceipt(
                 ReceiptTitles.Survey, 
                 ReceiptMethods.Buy, 
@@ -40,9 +48,9 @@ contract SurveyMarket is SurveyResponse {
                 price, 
                 now
             );
-            // 구매 생성
             addSubscriber(_surveyId, msg.sender);
             // 열람 가능한지
+            emit BuySurvey(_surveyId, price);
             return newReceiptId;
         }
         

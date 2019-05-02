@@ -4,8 +4,6 @@ import "./StandardToken.sol";
 import "./SurveyOwnership.sol";
 
 contract SurveyWallet is SurveyOwnership, StandardToken { 
-    uint256[] resultList;
-
     /**
     * @dev Index에 해당하는 영수증 상세정보 반환
     * @param _receiptId 영수증 IndexId
@@ -56,6 +54,10 @@ contract SurveyWallet is SurveyOwnership, StandardToken {
     /** @dev 내가 판매한 설문 영수증의 Index List 반환 */
     function getSurveySellReceiptList() public view returns (uint256[] memory) {
         return surveySellReceiptList[msg.sender];
+    }
+    /** @dev 내가 등록한 기부 단체 영수증의 Index List 반환 */
+    function getFoundationRequestReceiptList() public view returns (uint256[] memory) {
+        return foundationRequestReceiptList[msg.sender];
     }
     /** @dev 내가 기부한 기부 영수증의 Index List 반환 */
     function getFoundationDonateReceiptList() public view returns (uint256[] memory) {

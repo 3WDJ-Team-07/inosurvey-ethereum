@@ -3,6 +3,9 @@ pragma solidity ^0.5.0;
 import "./SurveyRequest.sol";
 
 contract SurveyResponse is SurveyRequest {
+    /** @dev 설문 응답 이벤트 */
+    event ResponseSurvey(uint256 surveyId, uint256 reward);
+
     function responseSurvey(uint256 _surveyId) public returns (uint256) {
 
         // 응답 보상 지불 시도
@@ -22,6 +25,8 @@ contract SurveyResponse is SurveyRequest {
                 surveys[_surveyId].rewardPrice,
                 now
             );
+            emit ResponseSurvey(_surveyId, surveys[_surveyId].rewardPrice);
+
             return newReceiptId;
         }else {
             revert();

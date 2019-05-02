@@ -7,7 +7,7 @@ contract SurveyBase is SurveyAccessControl {
     /** @dev 설문 생성 이벤트 */
     event CreateSurvey(uint256 surveyId, address owner);
     /** @dev 영수증 생성 이벤트 */
-    event CreateReceipt(uint256 ReceiptId, address owner);
+    event CreateReceipt(uint256 receiptId, address owner);
     /** @dev 기부 단체 생성 이벤트 */
     event CreateFoundation(uint256 foundationId, address owner);
     /** @dev 상품 생성 이벤트 */
@@ -84,6 +84,11 @@ contract SurveyBase is SurveyAccessControl {
     /// 상품 데이터 주인
     mapping (uint256 => address) productIndexToOwner;
     
+    // mapping (address => uint256[]) surveyRequestList;
+    // mapping (address => uint256[]) surveyResponseList;
+    // mapping (address => uint256[]) foundationCreateList;
+    // mapping (address => uint256[]) surveyBuyList;
+
     /*** RECEIPTS ***/
     // 유저가 요청한 설문 조사 영수증 리스트
     mapping (address => uint256[]) surveyRequestReceiptList;    
@@ -95,6 +100,8 @@ contract SurveyBase is SurveyAccessControl {
     mapping (address => uint256[]) surveySellReceiptList;
     // 설문 구매시 보너스 영수증 리스트
     mapping (address => uint256[]) surveyRewardReceiptList;
+    // 유저가 등록한 기부 단체 영수증 리스트
+    mapping (address => uint256[]) foundationRequestReceiptList;
     // 유저가 기부한 금액 영수증 리스트
     mapping (address => uint256[]) foundationDonateReceiptList;
     // 유저가 구매한 상품 영수증 리스트
@@ -201,7 +208,9 @@ contract SurveyBase is SurveyAccessControl {
             }
         // 기부 단체인 경우
         }else if(_title == ReceiptTitles.Foundation){
-            if(_method == ReceiptMethods.Donate) {
+            if(_method == ReceiptMethods.Request) {
+                foundationRequestReceiptList[msg.sender].push(newReceiptId);
+            }else if(_method == ReceiptMethods.Donate) {
                 foundationDonateReceiptList[msg.sender].push(newReceiptId);
             }else {
                 revert();

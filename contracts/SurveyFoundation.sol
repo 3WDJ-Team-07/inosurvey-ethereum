@@ -3,6 +3,7 @@ pragma solidity ^0.5.0;
 import "./SurveyMarket.sol";
 
 contract SurveyFoundation is SurveyMarket {
+    /** @dev 기부 하기 이벤트 */
     event Donation(uint256 foundationId, uint256 price);
 
     uint256[] tempList;
@@ -20,6 +21,15 @@ contract SurveyFoundation is SurveyMarket {
             now,
             _closedAt,
             true
+        );
+        _createReceipt(
+            ReceiptTitles.Foundation,
+            ReceiptMethods.Request,
+            address(0),
+            msg.sender,
+            newFoundationId,
+            0,
+            now
         );
         return newFoundationId;
     } 
@@ -52,6 +62,7 @@ contract SurveyFoundation is SurveyMarket {
                     _value,
                     now
                 );
+                emit Donation(_foundationId, _value);
                 return newReceiptId;
             }else {
                 revert();
