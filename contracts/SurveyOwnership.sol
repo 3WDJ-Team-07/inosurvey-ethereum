@@ -32,10 +32,20 @@ contract SurveyOwnership is SurveyBase {
         require(receiptIndexToOwner[_receiptId] == msg.sender);
         _;
     }
-
+    // 설문 구매자만
     modifier onlyBuyer(uint256 _surveyId) {
         require(isSurveyToBuyer(_surveyId, msg.sender));
         _;
+    }
+    // 설문 구매 가능 여부
+    modifier buyableSurvey(uint256 _surveyId) {
+        require(isBuyableSurvey(_surveyId));
+        _;
+    }
+
+    // 구매 가능한 설문조사 인지?
+    function isBuyableSurvey(uint256 _surveyId) public view returns (bool) {
+        return surveys[_surveyId].isSell;
     }
 
     /***  SURVEY ROLE ***/

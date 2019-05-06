@@ -39,19 +39,23 @@ contract SurveyWallet is SurveyOwnership, StandardToken {
             receipts[_receiptId].startedAt
         );
     }
-    /** @dev 내가 요청한 설문 영수증의 Index List 반환 */
+    /** @dev 모든 설문 영수증의 Index List 반환 */
+    function getOwnerReceiptList() public view returns (uint256[] memory) {
+        return ownerReceiptList[msg.sender];
+    }
+    /** @dev 내가 요청한 설문 영수증의 Index List 반환 (소모) */
     function getSurveyRequestReceiptList() public view returns (uint256[] memory) {
         return surveyRequestReceiptList[msg.sender];
     }
-    /** @dev 내가 응답한 설문 영수증의 Index List 반환 */
+    /** @dev 내가 응답한 설문 영수증의 Index List 반환 (적립) */
     function getSurveyResponseReceiptList() public view returns (uint256[] memory) {
         return surveyResponseReceiptList[msg.sender];
     }
-    /** @dev 내가 구매한 설문 영수증의 Index List 반환 */
+    /** @dev 내가 구매한 설문 영수증의 Index List 반환 (소모) */
     function getSurveyBuyReceiptList() public view returns (uint256[] memory) {
         return surveyBuyReceiptList[msg.sender];
     }
-    /** @dev 내가 판매한 설문 영수증의 Index List 반환 */
+    /** @dev 내가 판매한 설문 영수증의 Index List 반환 (적립) */
     function getSurveySellReceiptList() public view returns (uint256[] memory) {
         return surveySellReceiptList[msg.sender];
     }
@@ -59,7 +63,7 @@ contract SurveyWallet is SurveyOwnership, StandardToken {
     function getFoundationRequestReceiptList() public view returns (uint256[] memory) {
         return foundationRequestReceiptList[msg.sender];
     }
-    /** @dev 내가 기부한 기부 영수증의 Index List 반환 */
+    /** @dev 내가 기부한 기부 영수증의 Index List 반환 (소모) */
     function getFoundationDonateReceiptList() public view returns (uint256[] memory) {
         return foundationDonateReceiptList[msg.sender];
     }

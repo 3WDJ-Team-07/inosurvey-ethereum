@@ -22,7 +22,7 @@ contract SurveyBase is SurveyAccessControl {
         uint256 currentCount;       // 현재 응답자 수
         uint256 startedAt;          // 등록 날짜
         uint8   questionCount;      // 질문 개수
-        bool    isSell;             // 팔지 말지 
+        bool    isSell;             // 팔지 말지
         // bytes32 hashData;       // DB 데이터 변조 여부 확인
     }
 
@@ -43,7 +43,7 @@ contract SurveyBase is SurveyAccessControl {
         uint256 total;              // 전송량
         uint256 startedAt;          // 날짜
     }
-    
+
     struct Product {
         uint256 price;
     }
@@ -90,10 +90,11 @@ contract SurveyBase is SurveyAccessControl {
     // mapping (address => uint256[]) surveyBuyList;
 
     /*** RECEIPTS ***/
+    mapping (address => uint256[]) ownerReceiptList;
     // 유저가 요청한 설문 조사 영수증 리스트
-    mapping (address => uint256[]) surveyRequestReceiptList;    
+    mapping (address => uint256[]) surveyRequestReceiptList;
     // 유저가 응답한 설문 조사 영수증 리스트
-    mapping (address => uint256[]) surveyResponseReceiptList;   
+    mapping (address => uint256[]) surveyResponseReceiptList;
     // 유저가 구매한 설문 조사 영수증 리스트
     mapping (address => uint256[]) surveyBuyReceiptList;
     // 유저가 판매한 설문 조사 영수증 리스트
@@ -159,14 +160,14 @@ contract SurveyBase is SurveyAccessControl {
     /**
     * @dev 영수증 생성 메소드, 토큰 소비 흐름을 감시
     * CreateReceipt EVENT 발생
-    * 종류에 따른 매핑에 영수증 index 저장 
+    * 종류에 따른 매핑에 영수증 index 저장
     * @param _title 어떤 오브젝트인지, ex) survey, product.
     * @param _method 어떤 행동을 했는지, ex) buy, sell.
     * @param _to 누구의 계좌로 송금 하였는지.
     * @param _from 누구의 계좌에소 출금 하였는지.
     * @param _objectId 스토리지에 저장된 object(survey, product) index.
     * @param _total 총 금액.
-    * @return A uint256 영수증 구조체 배열에 들어간 Index 반환 
+    * @return A uint256 영수증 구조체 배열에 들어간 Index 반환
     */
     function _createReceipt(
         ReceiptTitles   _title,
@@ -191,6 +192,9 @@ contract SurveyBase is SurveyAccessControl {
         });
         uint256 newReceiptId = receipts.push(_receipt) - 1;
         receiptIndexToOwner[newReceiptId] = msg.sender;
+
+        ownerReceiptList[msg.sender].push(newReceiptId);
+
         // 설문인 경우
         if(_title == ReceiptTitles.Survey) {
             if(_method == ReceiptMethods.Request) {

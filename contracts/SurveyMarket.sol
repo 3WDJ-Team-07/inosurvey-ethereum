@@ -23,7 +23,11 @@ contract SurveyMarket is SurveyResponse {
     }
 
     // 설문 판매 등록 취소
-    function cancelSurveyMarket(uint256 _surveyId) public returns (bool) {
+    function cancelSurveyMarket(uint256 _surveyId) 
+        public 
+        onlySurveyOwner(_surveyId)
+        returns (bool) 
+    {
         surveys[_surveyId].sellPrice = 0;
         surveys[_surveyId].isSell = false;
         emit CancelSurveyMarket(_surveyId);
@@ -31,7 +35,11 @@ contract SurveyMarket is SurveyResponse {
     }
 
     // 설문 구매
-    function buySurvey(uint256 _surveyId) public returns (uint256) {
+    function buySurvey(uint256 _surveyId) 
+        public 
+        buyableSurvey(_surveyId)
+        returns (uint256) 
+    {
         Survey memory targetSurvey = surveys[_surveyId];
         uint256 price = targetSurvey.sellPrice;
         // 토큰 전송 시도
