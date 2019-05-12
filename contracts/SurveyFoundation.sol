@@ -5,8 +5,7 @@ import "./SurveyMarket.sol";
 contract SurveyFoundation is SurveyMarket {
     /** @dev 기부 하기 이벤트 */
     event Donation(uint256 foundationId, uint256 price);
-
-    uint256[] tempList;
+    
     // 기부단체 등록
     function createFoundation(
         uint256 _maximumAmount,
@@ -72,18 +71,7 @@ contract SurveyFoundation is SurveyMarket {
         }
     }
 
-    // 기부 단체 리스트 
-    function getFoundationList() public returns (uint256[] memory) {
-        // 
-        uint256[] memory resultList;
-        uint256[] memory receiptIndexList = getFoundationDonateReceiptList();
-        tempList = resultList;
-        for(uint i = 0 ; i < foundationDonateReceiptList[msg.sender].length ; i++) {
-            tempList.push(receipts[receiptIndexList[i]].objectId);
-        }
-        return tempList;
-    }
-
+    // 기부단체 상세보기
     function getFoundationDetail(uint256 _foundationId)
         public
         view
@@ -103,4 +91,15 @@ contract SurveyFoundation is SurveyMarket {
             foundations[_foundationId].isAchieved
         );
     }
+
+    // // 기부 단체 리스트 
+    // function getFoundationList() public returns (uint256[] memory) {
+    //     uint256[] memory resultList;
+    //     uint256[] memory receiptIndexList = getFoundationDonateReceiptList();
+    //     tempList = resultList;
+    //     for(uint i = 0 ; i < foundationDonateReceiptList[msg.sender].length ; i++) {
+    //         tempList.push(receipts[receiptIndexList[i]].objectId);
+    //     }
+    //     return tempList;
+    // }
 }

@@ -58,7 +58,7 @@ contract SurveyBase is SurveyAccessControl {
         Foundation,
         Product
     }
-    
+
     enum ReceiptMethods {
         Request,
         Response,
@@ -83,11 +83,9 @@ contract SurveyBase is SurveyAccessControl {
     mapping (uint256 => address) foundationIndexToOwner;
     /// 상품 데이터 주인
     mapping (uint256 => address) productIndexToOwner;
-    
-    // mapping (address => uint256[]) surveyRequestList;
-    // mapping (address => uint256[]) surveyResponseList;
-    // mapping (address => uint256[]) foundationCreateList;
-    // mapping (address => uint256[]) surveyBuyList;
+
+    // 설문을 구매한 사람 리스트
+    mapping (uint256 => address[]) surveyBuyerList;
 
     /*** RECEIPTS ***/
     mapping (address => uint256[]) ownerReceiptList;
@@ -110,7 +108,6 @@ contract SurveyBase is SurveyAccessControl {
     // 유저가 판매한 상품 영수증 리스트
     mapping (address => uint256[]) productSellReceiptList;
 
-    
     /**
     * @dev Create Survey(internal)
     * @param _requestPrice 설문 등록 요청 가격.
@@ -137,14 +134,14 @@ contract SurveyBase is SurveyAccessControl {
         returns (uint256)
     {
         Survey memory _survey = Survey({
-            requestPrice:   _requestPrice,
-            sellPrice:      _sellPrice,
-            rewardPrice:    _rewardPrice,
-            maximumCount:   _maximumCount,
-            currentCount:   _currentCount,
-            startedAt:      _startedAt,
-            questionCount:  _questionCount,
-            isSell:         _isSell
+            requestPrice: _requestPrice,
+            sellPrice: _sellPrice,
+            rewardPrice: _rewardPrice,
+            maximumCount: _maximumCount,
+            currentCount: _currentCount,
+            startedAt: _startedAt,
+            questionCount: _questionCount,
+            isSell: _isSell
             //hashData: _hashData
         });
 

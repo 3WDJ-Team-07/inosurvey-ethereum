@@ -56,6 +56,7 @@ contract SurveyMarket is SurveyResponse {
                 price, 
                 now
             );
+            surveyBuyerList[_surveyId].push(msg.sender);
             addSubscriber(_surveyId, msg.sender);
             // 열람 가능한지
             emit BuySurvey(_surveyId, price);
@@ -64,27 +65,32 @@ contract SurveyMarket is SurveyResponse {
         
     }
 
-    // 설문 판매 리스트
-    function getSurveyMarketList() public returns (uint256[] memory) {
-        uint256[] memory resultList;
-        tempList = resultList;
+    // // 설문 판매 리스트
+    // function getSurveyMarketList() public returns (uint256[] memory) {
+    //     uint256[] memory resultList;
+    //     tempList = resultList;
 
-        for(uint i = 0 ; i < surveys.length ; i++) {
-            if(surveys[i].isSell) {
-                tempList.push(i);
-            }
-        }
-        return tempList;
-    }
+    //     for(uint i = 0 ; i < surveys.length ; i++) {
+    //         if(surveys[i].isSell) {
+    //             tempList.push(i);
+    //         }
+    //     }
+    //     return tempList;
+    // }
 
-    // 설문 구매 리스트
-    function getSurveyBuyList() public returns (uint256[] memory) {
-        uint256[] memory resultList;
-        uint256[] memory receiptIndexList = getSurveyBuyReceiptList();
-        tempList = resultList;
-        for(uint i = 0 ; i < receiptIndexList.length ; i++) {
-            tempList.push(receipts[receiptIndexList[i]].objectId);
-        }
-        return tempList;
+    // // 설문 구매 리스트
+    // function getSurveyBuyList() public returns (uint256[] memory) {
+    //     uint256[] memory resultList;
+    //     uint256[] memory receiptIndexList = getSurveyBuyReceiptList();
+    //     tempList = resultList;
+    //     for(uint i = 0 ; i < receiptIndexList.length ; i++) {
+    //         tempList.push(receipts[receiptIndexList[i]].objectId);
+    //     }
+    //     return tempList;
+    // }
+
+    //설문 구매자 리스트
+    function getSurveyBuyerList(uint256 _surveyId) public view returns (address[] memory) {
+        return surveyBuyerList[_surveyId];
     }
 }

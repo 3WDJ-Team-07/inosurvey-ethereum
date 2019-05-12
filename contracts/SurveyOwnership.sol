@@ -43,7 +43,7 @@ contract SurveyOwnership is SurveyBase {
         _;
     }
 
-    // 구매 가능한 설문조사 인지?
+    // 구매한 설문조사 인지?
     function isBuyableSurvey(uint256 _surveyId) public view returns (bool) {
         return surveys[_surveyId].isSell;
     }

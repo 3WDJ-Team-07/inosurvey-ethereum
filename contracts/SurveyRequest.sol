@@ -3,7 +3,7 @@ pragma solidity ^0.5.0;
 import "./SurveyWallet.sol";
 
 contract SurveyRequest is SurveyWallet {
-    uint256[] tempList;
+    // uint256[] tempList;
 
     /**
     * @dev create Survey(public)
@@ -63,19 +63,6 @@ contract SurveyRequest is SurveyWallet {
         }
 
     }
-    /**
-    * @dev 내가 등록한 설문 리스트 반환
-    * @return A uint256[] 등록 설문 리스트의 DB primary key 반환 
-    */
-    function getSurveyRequestList() public returns (uint256[] memory) {
-        uint256[] memory resultList;
-        uint256[] memory receiptIndexList = getSurveyRequestReceiptList();
-        tempList = resultList;
-        for(uint i = 0 ; i < receiptIndexList.length ; i++) {
-            tempList.push(receipts[receiptIndexList[i]].objectId);
-        }
-        return tempList;
-    }
 
     /**
     * @dev 설문 조사 상세 정보 반환
@@ -108,4 +95,18 @@ contract SurveyRequest is SurveyWallet {
             survey.isSell
         );
     }
+
+    // /**
+    // * @dev 내가 등록한 설문 리스트 반환
+    // * @return A uint256[] 등록 설문 리스트의 DB primary key 반환 
+    // */
+    // function getSurveyRequestList() public returns (uint256[] memory) {
+    //     uint256[] memory resultList;
+    //     uint256[] memory receiptIndexList = getSurveyRequestReceiptList();
+    //     tempList = resultList;
+    //     for(uint i = 0 ; i < receiptIndexList.length ; i++) {
+    //         tempList.push(receipts[receiptIndexList[i]].objectId);
+    //     }
+    //     return tempList;
+    // }
 }

@@ -10,9 +10,9 @@ contract SurveyCore is SurveyFoundation {
         developerAddress = msg.sender;
         mint(msg.sender, 1000000000000);
 
-        // burning survey
-        requestSurvey(0, now, 0);
-        // burning foundation
-        createFoundation(0, 0);
+        // // burning survey
+        // requestSurvey(0, now, 0);
+        // // burning foundation
+        // createFoundation(0, 0);
     }
 }

@@ -31,18 +31,18 @@ contract SurveyResponse is SurveyRequest {
         }else {
             revert();
         }
-        
+    
     }
 
-    // 설문 응답 리스트 반환
-    function getSurveyResponseList() public returns (uint256[] memory) {
-        uint256[] memory resultList;
-        uint256[] memory receiptIndexList = getSurveyResponseReceiptList();
-        tempList = resultList;
-        for(uint i = 0 ; i < surveyResponseReceiptList[msg.sender].length ; i++) {
-            tempList.push(receipts[receiptIndexList[i]].objectId);
-        }
-        return tempList;
-    }
+    // // 설문 응답 리스트 반환
+    // function getSurveyResponseList() public returns (uint256[] memory) {
+    //     uint256[] memory resultList;
+    //     uint256[] memory receiptIndexList = getSurveyResponseReceiptList();
+    //     tempList = resultList;
+    //     for(uint i = 0 ; i < surveyResponseReceiptList[msg.sender].length ; i++) {
+    //         tempList.push(receipts[receiptIndexList[i]].objectId);
+    //     }
+    //     return tempList;
+    // }
 
 }
